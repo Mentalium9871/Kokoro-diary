@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>きもち日記</title>
+<meta name="description" content="毎日のきもちを記録して、自分のセルフケアを見つけよう">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="きもち日記">
+<meta name="theme-color" content="#6C5CE7">
+<link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/prop-types@15.8.1/prop-types.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/recharts@2.15.0/umd/Recharts.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.0/babel.min.js"></script>
+<script>
+if (typeof crypto === 'undefined' || typeof crypto.randomUUID !== 'function') {
+  if (!window.crypto) window.crypto = {};
+  window.crypto.randomUUID = function() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  };
+}
+// Service Worker 登録
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').catch(function() {});
+  });
+}
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F8F6F2;
+  --card: #FFFFFF;
+  --card-hover: #FAFAFA;
+  --text: #1A1A2E;
+  --text-sub: #6E6E80;
+  --text-muted: #A0A0B0;
+  --border: rgba(0,0,0,0.06);
+  --accent: #6C5CE7;
+  --accent-light: #A29BFE;
+  --positive: #00B894;
+  --negative: #E17055;
+  --warm: #FDCB6E;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+body {
+  font-family: 'Outfit', 'Noto Sans JP', 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+}
+
+#root { min-height: 100vh; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes scaleIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+@keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-4px); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes popIn { 0% { transform:scale(0.8); opacity:0; } 60% { transform:scale(1.05); } 100% { transform:scale(1); opacity:1; } }
+
+.fade-up { animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1); }
+.scale-in { animation: scaleIn 0.3s cubic-bezier(0.22,1,0.36,1); }
+.pop-in { animation: popIn 0.4s cubic-bezier(0.22,1,0.36,1); }
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #6C5CE7, #a29bfe, #fd79a8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Score slider */
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+  border-radius: 3px; outline: none;
+  background: linear-gradient(to right, #E17055, #FDCB6E, #dfe6e9, #74b9ff, #00B894);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 32px; height: 32px; border-radius: 50%;
+  background: white; cursor: pointer;
+  box-shadow: 0 2px 12px rgba(108,92,231,0.3), 0 0 0 3px rgba(108,92,231,0.15);
+  transition: box-shadow 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 2px 16px rgba(108,92,231,0.4), 0 0 0 5px rgba(108,92,231,0.12);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: white; cursor: pointer;
+  box-shadow: 0 2px 12px rgba(108,92,231,0.3), 0 0 0 3px rgba(108,92,231,0.15);
+}
+
+.toggle-track { width: 44px; height: 26px; border-radius: 13px; cursor: pointer; position: relative; transition: background 0.3s; }
+.toggle-thumb { width: 20px; height: 20px; border-radius: 50%; background: white; position: absolute; top: 3px; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-type="module">
+const { useState, useEffect, useMemo, useReducer, createContext, useContext, useRef } = React;
+const { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip, Cell } = Recharts;
+
+// ═══════════════════════════════════════
+// Constants & Types
+// ═══════════════════════════════════════
+const TIME_SLOTS = ["morning", "afternoon", "evening", "night"];
+const TIME_SLOT_CONFIG = {
+  morning:   { label: "朝",   timeRange: "6:00–10:00",  gradient: "linear-gradient(135deg, #FFECD2 0%, #FCB69F 100%)", icon: "☀", color: "#F8A15A" },
+  afternoon: { label: "昼",   timeRange: "11:00–14:00", gradient: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", icon: "◐", color: "#74b9ff" },
+  evening:   { label: "夕方", timeRange: "15:00–18:00", gradient: "linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)", icon: "◑", color: "#a29bfe" },
+  night:     { label: "夜",   timeRange: "19:00–23:00", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", icon: "☽", color: "#6C5CE7" },
+};
+const DAY_LABELS = ["日","月","火","水","木","金","土"];
+const MONTH_LABELS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+// ═══════════════════════════════════════
+// Utilities
+// ═══════════════════════════════════════
+function toDateString(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function today() { return toDateString(new Date()); }
+function formatDateJP(s) { const d=new Date(s); return `${d.getMonth()+1}/${d.getDate()}(${DAY_LABELS[d.getDay()]})`; }
+function getCurrentTimeSlot() { const h=new Date().getHours(); if(h>=6&&h<11) return "morning"; if(h>=11&&h<15) return "afternoon"; if(h>=15&&h<19) return "evening"; return "night"; }
+function getDaysInMonth(y,m) { return new Date(y,m+1,0).getDate(); }
+function getFirstDayOfMonth(y,m) { return new Date(y,m,1).getDay(); }
+function getWeekRange(date) { const d=new Date(date), day=d.getDay(), diff=day===0?-6:1-day; const mon=new Date(d); mon.setDate(d.getDate()+diff); mon.setHours(0,0,0,0); const sun=new Date(mon); sun.setDate(mon.getDate()+6); return {start:mon,end:sun}; }
+function getWeekDates(date) { const{start}=getWeekRange(date); return Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);return toDateString(d);}); }
+function getWeekKey(date) { const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())); const dn=d.getUTCDay()||7; d.setUTCDate(d.getUTCDate()+4-dn); const ys=new Date(Date.UTC(d.getUTCFullYear(),0,1)); const w=Math.ceil(((d.getTime()-ys.getTime())/86400000+1)/7); return `${d.getUTCFullYear()}-W${String(w).padStart(2,'0')}`; }
+
+// Score → color (bright palette)
+const SCORE_COLORS = [[-5,"#E17055"],[-3,"#F39C6B"],[-1,"#FDCB6E"],[0,"#B2BEC3"],[1,"#81ECEC"],[3,"#55EFC4"],[5,"#00B894"]];
+function getScoreColor(score) {
+  const c=Math.max(-5,Math.min(5,score));
+  for(let i=0;i<SCORE_COLORS.length-1;i++){
+    const[sA,cA]=SCORE_COLORS[i],[sB]=SCORE_COLORS[i+1];
+    if(c>=sA&&c<=sB){
+      const t=(c-sA)/(sB-sA);
+      const a=hexToRgb(SCORE_COLORS[i][1]),b=hexToRgb(SCORE_COLORS[i+1][1]);
+      return `rgb(${Math.round(a[0]+(b[0]-a[0])*t)},${Math.round(a[1]+(b[1]-a[1])*t)},${Math.round(a[2]+(b[2]-a[2])*t)})`;
+    }
+  }
+  return "#B2BEC3";
+}
+function hexToRgb(hex) { const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return [r,g,b]; }
+
+// ═══════════════════════════════════════
+// 状態別ガイド（-5 〜 +5 の各レベルに対応） — デフォルトテンプレート
+// ═══════════════════════════════════════
+const DEFAULT_STATE_GUIDE = {
+  "5":  { title:"エネルギーが満タン",   behavior:"おしゃべりが止まらない・買い物が増える・気持ちが高ぶる", selfCare:["一人の静かな時間をとる","外をゆっくり散歩する","深呼吸で体の感覚に戻る"] },
+  "4":  { title:"とても元気",           behavior:"予定を詰めたくなる・動きが早くなる・眠りが浅い",         selfCare:["音楽を聴いて落ち着く","ゆっくりご飯を味わう","寝る前のスマホを控える"] },
+  "3":  { title:"元気がみなぎる",       behavior:"声が大きくなる・早口になる・集中しすぎる",               selfCare:["手を動かす作業に切り替える","体を大きく伸ばす","温かいお茶で一息"] },
+  "2":  { title:"調子がいい",           behavior:"笑顔が多い・集中できる・人と話したくなる",               selfCare:["好きなことに時間を使う","感謝をひとつ書き留める"] },
+  "1":  { title:"ちょっと上向き",       behavior:"自然に動ける・前向きに考えられる",                       selfCare:["好きな音楽を聴く","軽い運動やストレッチ"] },
+  "0":  { title:"いつも通り",           behavior:"特に問題なく落ち着いて過ごせる",                         selfCare:["深呼吸で今の状態を確認","水をゆっくり飲む"] },
+  "-1": { title:"ちょっと疲れ気味",     behavior:"ぼーっとする・食欲がすこし落ちる",                       selfCare:["白湯を飲む","毛布にくるまって休む","5分だけ目を閉じる"] },
+  "-2": { title:"気力が足りない",       behavior:"ミスが増える・やる気が出にくい・反応が鈍い",             selfCare:["温かい飲み物をゆっくり","短く横になる","無理な予定を手放す"] },
+  "-3": { title:"だいぶしんどい",       behavior:"反応が遅い・音やにおいが気になる・イライラしやすい",     selfCare:["静かな場所で休む","アイマスクで光を遮る","やることを一つだけに絞る"] },
+  "-4": { title:"とてもつらい",         behavior:"食べられない・話すのがつらい・涙が出やすい",             selfCare:["小さな目標を1つだけやる","安心できる物をそばに置く","信頼できる人に一言だけ連絡"] },
+  "-5": { title:"がまんの限界",         behavior:"体が動かない・涙が出る・気持ちが深く沈む",               selfCare:["何もせず休んでいい","「助けて」と伝えて大丈夫","安全な場所で過ごす・相談窓口を思い出す"] },
+};
+const STATE_KEYS = ["5","4","3","2","1","0","-1","-2","-3","-4","-5"];
+function cloneDefaultGuide(){
+  const r = {};
+  for (const k of STATE_KEYS) r[k] = { ...DEFAULT_STATE_GUIDE[k], selfCare:[...DEFAULT_STATE_GUIDE[k].selfCare] };
+  return r;
+}
+function lookupStateGuide(guide, score){
+  const k = String(Math.max(-5, Math.min(5, Math.round(score))));
+  return (guide && guide[k]) || DEFAULT_STATE_GUIDE[k];
+}
+
+function getScoreFace(s) {
+  // Simple geometric faces using CSS
+  if(s<=-4) return {mouth:"sad2",eyes:"sad",color:"#E17055"};
+  if(s<=-2) return {mouth:"sad",eyes:"normal",color:"#F39C6B"};
+  if(s<=0) return {mouth:"flat",eyes:"normal",color:"#B2BEC3"};
+  if(s<=2) return {mouth:"smile",eyes:"normal",color:"#55EFC4"};
+  if(s<=4) return {mouth:"happy",eyes:"happy",color:"#00B894"};
+  return {mouth:"grin",eyes:"happy",color:"#00B894"};
+}
+
+// Face component
+function FaceIcon({score, size=40}) {
+  const f = getScoreFace(score);
+  const r = size/2;
+  const eyeR = size*0.06;
+  const eyeY = r*0.7;
+  const eyeSpread = r*0.35;
+  const mouthY = r*1.2;
+
+  let mouthPath;
+  switch(f.mouth) {
+    case "grin": mouthPath = `M${r-r*0.35},${mouthY} Q${r},${mouthY+r*0.45} ${r+r*0.35},${mouthY}`; break;
+    case "happy": mouthPath = `M${r-r*0.3},${mouthY} Q${r},${mouthY+r*0.35} ${r+r*0.3},${mouthY}`; break;
+    case "smile": mouthPath = `M${r-r*0.25},${mouthY} Q${r},${mouthY+r*0.2} ${r+r*0.25},${mouthY}`; break;
+    case "flat": mouthPath = `M${r-r*0.2},${mouthY} L${r+r*0.2},${mouthY}`; break;
+    case "sad": mouthPath = `M${r-r*0.25},${mouthY+r*0.12} Q${r},${mouthY-r*0.12} ${r+r*0.25},${mouthY+r*0.12}`; break;
+    case "sad2": mouthPath = `M${r-r*0.3},${mouthY+r*0.2} Q${r},${mouthY-r*0.2} ${r+r*0.3},${mouthY+r*0.2}`; break;
+  }
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle cx={r} cy={r} r={r-1} fill={f.color} opacity="0.15"/>
+      <circle cx={r-eyeSpread} cy={eyeY} r={eyeR} fill={f.color}/>
+      <circle cx={r+eyeSpread} cy={eyeY} r={eyeR} fill={f.color}/>
+      {f.eyes==="happy" && <>
+        <line x1={r-eyeSpread-eyeR*1.2} y1={eyeY-eyeR*0.5} x2={r-eyeSpread} y2={eyeY-eyeR*1.5} stroke={f.color} strokeWidth={1.5} strokeLinecap="round"/>
+        <line x1={r-eyeSpread} y1={eyeY-eyeR*1.5} x2={r-eyeSpread+eyeR*1.2} y2={eyeY-eyeR*0.5} stroke={f.color} strokeWidth={1.5} strokeLinecap="round"/>
+        <line x1={r+eyeSpread-eyeR*1.2} y1={eyeY-eyeR*0.5} x2={r+eyeSpread} y2={eyeY-eyeR*1.5} stroke={f.color} strokeWidth={1.5} strokeLinecap="round"/>
+        <line x1={r+eyeSpread} y1={eyeY-eyeR*1.5} x2={r+eyeSpread+eyeR*1.2} y2={eyeY-eyeR*0.5} stroke={f.color} strokeWidth={1.5} strokeLinecap="round"/>
+      </>}
+      {f.eyes==="sad" && <>
+        <line x1={r-eyeSpread-eyeR*1.2} y1={eyeY-eyeR*1.5} x2={r-eyeSpread+eyeR*1.2} y2={eyeY-eyeR*0.3} stroke={f.color} strokeWidth={1.5} strokeLinecap="round"/>
+        <line x1={r+eyeSpread-eyeR*1.2} y1={eyeY-eyeR*0.3} x2={r+eyeSpread+eyeR*1.2} y2={eyeY-eyeR*1.5} stroke={f.color} strokeWidth={1.5} strokeLinecap="round"/>
+      </>}
+      <path d={mouthPath} fill="none" stroke={f.color} strokeWidth={2} strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+// Analytics
+function averageScore(e){if(!e.length)return null; return e.reduce((a,x)=>a+x.score,0)/e.length;}
+function averageByTimeSlot(entries){const r={};for(const s of TIME_SLOTS){const se=entries.filter(e=>e.timeSlot===s);r[s]={avg:averageScore(se),count:se.length};}return r;}
+function findBestWorst(entries){if(!entries.length)return{best:null,worst:null};let b=entries[0],w=entries[0];for(const e of entries){if(e.score>b.score)b=e;if(e.score<w.score)w=e;}return{best:b,worst:w};}
+function generateInsights(entries,prev){
+  const ins=[];
+  if(!entries.length){ins.push("今週はまだ記録がありません。少しずつ始めてみましょう!");return ins;}
+  const rate=Math.round((entries.length/28)*100);
+  ins.push(`28スロット中 ${entries.length}スロット記録 — 達成率 ${rate}%`);
+  const avg=averageScore(entries);
+  if(avg!==null) ins.push(`今週の平均: ${avg>=0?"+":""}${avg.toFixed(1)}`);
+  const pAvg=averageScore(prev);
+  if(avg!==null&&pAvg!==null){const diff=avg-pAvg;if(Math.abs(diff)>=0.3)ins.push(`前週比 ${diff>0?"+":""}${diff.toFixed(1)} ${diff>0?"UP!":"DOWN"}`);else ins.push("前週とほぼ同じペースです");}
+  const bs=averageByTimeSlot(entries);let ws=null,wa=Infinity;for(const s of TIME_SLOTS){if(bs[s].avg!==null&&bs[s].avg<wa){wa=bs[s].avg;ws=s;}}
+  if(ws)ins.push(`${TIME_SLOT_CONFIG[ws].label}のスコアが低めの傾向 → 過ごし方を工夫してみては?`);
+  return ins;
+}
+
+// ═══════════════════════════════════════
+// Storage
+// ═══════════════════════════════════════
+const KEYS={entries:"metacog_diary_entries",weeklyNotes:"metacog_weekly_notes",settings:"metacog_settings",stateGuide:"metacog_state_guide",version:"metacog_data_version"};
+function sGet(k,fb){try{const r=localStorage.getItem(k);return r===null?fb:JSON.parse(r);}catch{return fb;}}
+function sSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.error(e);}}
+function loadEntries(){return sGet(KEYS.entries,[]);}
+function saveEntries(e){sSet(KEYS.entries,e);}
+function loadWeeklyNotes(){return sGet(KEYS.weeklyNotes,{});}
+function saveWeeklyNotes(n){sSet(KEYS.weeklyNotes,n);}
+function loadSettings(){return sGet(KEYS.settings,{userName:"",notificationsEnabled:false});}
+function saveSettings(s){sSet(KEYS.settings,s);}
+function loadStateGuide(){const raw=sGet(KEYS.stateGuide,null);if(!raw)return cloneDefaultGuide();const merged=cloneDefaultGuide();for(const k of STATE_KEYS){if(raw[k])merged[k]={title:raw[k].title??merged[k].title,behavior:raw[k].behavior??merged[k].behavior,selfCare:Array.isArray(raw[k].selfCare)?raw[k].selfCare.filter(s=>typeof s==='string'):merged[k].selfCare};}return merged;}
+function saveStateGuide(g){sSet(KEYS.stateGuide,g);}
+function exportAllData(){return JSON.stringify({version:1,entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),exportedAt:new Date().toISOString()},null,2);}
+function importData(json){try{const d=JSON.parse(json);if(!d.entries||!Array.isArray(d.entries))return{success:false,message:"このデータは使えないよ"};saveEntries(d.entries);if(d.weeklyNotes)saveWeeklyNotes(d.weeklyNotes);if(d.settings)saveSettings(d.settings);if(d.stateGuide)saveStateGuide(d.stateGuide);return{success:true,message:`${d.entries.length}件 読み込んだよ`};}catch{return{success:false,message:"読み込めなかったよ"};}}
+function clearAllData(){Object.values(KEYS).forEach(k=>localStorage.removeItem(k));}
+
+// AI分析用テキスト生成
+function formatForAI(entries, stateGuide){
+  const sorted = [...entries].sort((a,b)=>a.date.localeCompare(b.date)||TIME_SLOTS.indexOf(a.timeSlot)-TIME_SLOTS.indexOf(b.timeSlot));
+  const dateGroups = {};
+  for(const e of sorted){
+    if(!dateGroups[e.date]) dateGroups[e.date]=[];
+    dateGroups[e.date].push(e);
+  }
+
+  let out = `# きもち日記データ（AI分析用）\n`;
+  out += `エクスポート日時: ${new Date().toLocaleString("ja-JP")}\n`;
+  out += `記録件数: ${entries.length}件\n\n`;
+
+  // 状態表
+  out += `## じぶんの状態表（-5〜+5）\n`;
+  out += `| スコア | 状態 | 行動の様子 | セルフケア |\n`;
+  out += `|--------|------|------------|------------|\n`;
+  for(const k of STATE_KEYS){
+    const g = (stateGuide && stateGuide[k]) || DEFAULT_STATE_GUIDE[k];
+    out += `| ${k.padStart(3)} | ${g.title} | ${g.behavior} | ${g.selfCare.join("／")} |\n`;
+  }
+  out += `\n`;
+
+  // 日別データ
+  out += `## 日別の記録\n`;
+  for(const[date,es] of Object.entries(dateGroups)){
+    const d = new Date(date);
+    const avg = averageScore(es);
+    out += `### ${date}（${DAY_LABELS[d.getDay()]}）平均: ${avg!==null?(avg>=0?"+":"")+avg.toFixed(1):"---"}\n`;
+    for(const e of es){
+      const cfg = TIME_SLOT_CONFIG[e.timeSlot];
+      out += `- ${cfg.label}（${cfg.timeRange}）: ${e.score>=0?"+":""}${e.score}`;
+      if(e.comment) out += ` 「${e.comment}」`;
+      out += `\n`;
+    }
+    out += `\n`;
+  }
+
+  // 集計
+  if(entries.length > 0){
+    const totalAvg = averageScore(entries);
+    const bySlot = averageByTimeSlot(entries);
+    out += `## 集計\n`;
+    out += `- 全体の平均: ${totalAvg!==null?(totalAvg>=0?"+":"")+totalAvg.toFixed(2):"---"}\n`;
+    for(const s of TIME_SLOTS){
+      const a = bySlot[s];
+      out += `- ${TIME_SLOT_CONFIG[s].label}の平均: ${a.avg!==null?(a.avg>=0?"+":"")+a.avg.toFixed(2):"---"}（${a.count}件）\n`;
+    }
+    out += `\n`;
+  }
+
+  out += `---\n`;
+  out += `このデータをもとに、以下のような分析・可視化ができます：\n`;
+  out += `・時系列グラフ（日別 / 週別の推移）\n`;
+  out += `・時間帯別の傾向分析\n`;
+  out += `・コメントの感情分析\n`;
+  out += `・セルフケア提案の改善\n`;
+  out += `・気分の波のパターン発見\n`;
+
+  return out;
+}
+
+// ═══════════════════════════════════════
+// Context
+// ═══════════════════════════════════════
+const DiaryCtx=createContext();
+function diaryReducer(state,action){
+  switch(action.type){
+    case "ADD_ENTRY":{const entries=[...state.entries,action.entry];saveEntries(entries);return{...state,entries};}
+    case "UPDATE_ENTRY":{const entries=state.entries.map(e=>e.id===action.entry.id?action.entry:e);saveEntries(entries);return{...state,entries};}
+    case "DELETE_ENTRY":{const entries=state.entries.filter(e=>e.id!==action.id);saveEntries(entries);return{...state,entries};}
+    case "SET_WEEKLY_NOTE":{const wn={...state.weeklyNotes,[action.weekKey]:action.note};saveWeeklyNotes(wn);return{...state,weeklyNotes:wn};}
+    case "UPDATE_SETTINGS":{const s={...state.settings,...action.settings};saveSettings(s);return{...state,settings:s};}
+    case "UPDATE_STATE_GUIDE":{const g={...state.stateGuide,[action.key]:{...state.stateGuide[action.key],...action.patch}};saveStateGuide(g);return{...state,stateGuide:g};}
+    case "RESET_STATE_GUIDE":{const g=cloneDefaultGuide();saveStateGuide(g);return{...state,stateGuide:g};}
+    case "SET_TAB":return{...state,activeTab:action.tab};
+    case "LOAD":return{...state,entries:action.entries,weeklyNotes:action.weeklyNotes,settings:action.settings,stateGuide:action.stateGuide};
+    default:return state;
+  }
+}
+function DiaryProvider({children}){
+  const[state,dispatch]=useReducer(diaryReducer,{entries:[],weeklyNotes:{},settings:{userName:"",notificationsEnabled:false},stateGuide:cloneDefaultGuide(),activeTab:"home"});
+  useEffect(()=>{dispatch({type:"LOAD",entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide()});},[]);
+  return <DiaryCtx.Provider value={{state,dispatch}}>{children}</DiaryCtx.Provider>;
+}
+function useDiaryCtx(){return useContext(DiaryCtx);}
+
+// ═══════════════════════════════════════
+// Shared Styles
+// ═══════════════════════════════════════
+const S = {
+  card: { background:"var(--card)", borderRadius:"var(--radius)", padding:"20px", boxShadow:"var(--shadow-sm)", border:"1px solid var(--border)" },
+  btn: { border:"none", cursor:"pointer", fontFamily:"inherit", transition:"all 0.2s" },
+  input: { background:"#F1F0EE", border:"1px solid var(--border)", borderRadius:"var(--radius-sm)", padding:"10px 14px", fontSize:14, color:"var(--text)", outline:"none", fontFamily:"inherit", width:"100%", transition:"border-color 0.2s" },
+};
+
+// ═══════════════════════════════════════
+// Components
+// ═══════════════════════════════════════
+
+function Header() {
+  const now = new Date();
+  const greeting = now.getHours() < 12 ? "おはよう" : now.getHours() < 18 ? "こんにちは" : "こんばんは";
+  return (
+    <header style={{position:"sticky",top:0,zIndex:30,background:"rgba(248,246,242,0.85)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid var(--border)",padding:"14px 20px"}}>
+      <div style={{maxWidth:480,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div>
+          <p style={{fontSize:11,fontWeight:600,color:"var(--accent)",letterSpacing:"0.05em",marginBottom:2}}>{greeting}</p>
+          <h1 style={{fontSize:20,fontWeight:700,margin:0,letterSpacing:"-0.02em"}}>
+            <span className="gradient-text">きもち</span>
+            <span style={{color:"var(--text)",fontWeight:400,marginLeft:4}}>日記</span>
+          </h1>
+        </div>
+        <div style={{fontSize:12,color:"var(--text-sub)",fontWeight:500}}>{formatDateJP(today())}</div>
+      </div>
+    </header>
+  );
+}
+
+const TABS=[
+  {id:"home",label:"今日",icon:({active})=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active?"var(--accent)":"var(--text-muted)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>},
+  {id:"calendar",label:"カレンダー",icon:({active})=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active?"var(--accent)":"var(--text-muted)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>},
+  {id:"report",label:"ふりかえり",icon:({active})=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active?"var(--accent)":"var(--text-muted)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>},
+  {id:"selfcare",label:"セルフケア",icon:({active})=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active?"var(--accent)":"var(--text-muted)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>},
+  {id:"settings",label:"設定",icon:({active})=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={active?"var(--accent)":"var(--text-muted)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>},
+];
+
+function TabBar(){
+  const{state,dispatch}=useDiaryCtx();
+  return(
+    <nav style={{position:"fixed",bottom:0,left:0,right:0,zIndex:30,background:"rgba(248,246,242,0.92)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderTop:"1px solid var(--border)"}}>
+      <div style={{maxWidth:480,margin:"0 auto",display:"flex",padding:"6px 0 2px"}}>
+        {TABS.map(t=>{
+          const active=state.activeTab===t.id;
+          const Icon=t.icon;
+          return(
+            <button key={t.id} onClick={()=>dispatch({type:"SET_TAB",tab:t.id})}
+              style={{...S.btn,flex:1,display:"flex",flexDirection:"column",alignItems:"center",padding:"6px 0 6px",
+                background:"transparent",color:active?"var(--accent)":"var(--text-muted)"}}>
+              <Icon active={active}/>
+              <span style={{fontSize:9,fontWeight:active?600:400,marginTop:3,letterSpacing:"0.03em"}}>{t.label}</span>
+              {active && <div style={{width:4,height:4,borderRadius:2,background:"var(--accent)",marginTop:3}}/>}
+            </button>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+function Layout({children}){
+  return(
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column"}}>
+      <Header/>
+      <main style={{flex:1,paddingBottom:80,overflowY:"auto"}}>
+        <div style={{maxWidth:480,margin:"0 auto",padding:"16px 16px"}} className="fade-up">{children}</div>
+      </main>
+      <TabBar/>
+    </div>
+  );
+}
+
+// Score Slider
+function ScoreSlider({value,onChange}){
+  return(
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+        <FaceIcon score={-5} size={32}/>
+        <div style={{textAlign:"center"}}>
+          <div className="pop-in" key={value} style={{fontSize:40,fontWeight:800,color:getScoreColor(value),lineHeight:1}}>{value>0?`+${value}`:value}</div>
+        </div>
+        <FaceIcon score={5} size={32}/>
+      </div>
+      <input type="range" min={-5} max={5} step={1} value={value} onChange={e=>onChange(Number(e.target.value))} aria-label="スコア"/>
+      <div style={{display:"flex",justifyContent:"space-between",padding:"6px 2px 0",fontSize:10,color:"var(--text-muted)",fontWeight:500}}>
+        <span>-5</span><span>0</span><span>+5</span>
+      </div>
+    </div>
+  );
+}
+
+// Modal overlay
+function Modal({onClose,children}){
+  return(
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.2)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",zIndex:40,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+      <div onClick={e=>e.stopPropagation()} className="scale-in" style={{...S.card,padding:24,width:"100%",maxWidth:400,maxHeight:"90vh",overflowY:"auto",boxShadow:"var(--shadow-lg)"}}>{children}</div>
+    </div>
+  );
+}
+
+// 状態カード：スコアに応じた状態像＋セルフケア提案
+function StateCard({score, compact=false}){
+  const{state}=useDiaryCtx();
+  const g = lookupStateGuide(state.stateGuide, score);
+  if(!g) return null;
+  const color = getScoreColor(score);
+  const rgbMatch = color.match(/\d+/g);
+  const rgbStr = rgbMatch ? rgbMatch.slice(0,3).join(",") : "108,92,231";
+  return (
+    <div style={{
+      marginTop: compact?12:16,
+      padding: compact?14:16,
+      borderRadius:14,
+      background:`linear-gradient(135deg, rgba(${rgbStr},0.10), rgba(${rgbStr},0.04))`,
+      border:`1px solid rgba(${rgbStr},0.25)`
+    }}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+        <FaceIcon score={score} size={compact?26:32}/>
+        <div style={{flex:1,minWidth:0}}>
+          <p style={{fontSize:10,color:"var(--text-muted)",margin:0,fontWeight:600,letterSpacing:"0.05em"}}>いまの状態</p>
+          <p style={{fontSize:compact?13:15,fontWeight:700,color:"var(--text)",margin:"1px 0 0"}}>{g.title}</p>
+        </div>
+        <span style={{fontSize:14,fontWeight:800,color,lineHeight:1,flexShrink:0}}>{score>0?`+${score}`:score}</span>
+      </div>
+      <p style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.6,margin:"4px 0 10px"}}>{g.behavior}</p>
+      <div style={{paddingTop:10,borderTop:`1px dashed rgba(${rgbStr},0.35)`}}>
+        <p style={{fontSize:10,margin:"0 0 6px",fontWeight:700,letterSpacing:"0.05em",color}}>✦ おすすめのセルフケア</p>
+        {g.selfCare.map((s,i)=>(
+          <div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",marginBottom:4}}>
+            <span style={{fontSize:10,color,marginTop:4,flexShrink:0,lineHeight:1}}>●</span>
+            <span style={{fontSize:12,color:"var(--text)",lineHeight:1.55}}>{s}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Score Input Modal
+function ScoreInputModal({slot,date,onClose,entries,dispatch}){
+  const existing=entries.find(e=>e.date===date&&e.timeSlot===slot);
+  const[score,setScore]=useState(existing?.score??0);
+  const[comment,setComment]=useState(existing?.comment??"");
+  const config=TIME_SLOT_CONFIG[slot];
+  const handleSave=()=>{
+    if(existing) dispatch({type:"UPDATE_ENTRY",entry:{...existing,score,comment}});
+    else dispatch({type:"ADD_ENTRY",entry:{id:crypto.randomUUID(),date,timeSlot:slot,score,comment,createdAt:new Date().toISOString()}});
+    onClose();
+  };
+  return(
+    <Modal onClose={onClose}>
+      <div style={{textAlign:"center",marginBottom:20}}>
+        <div style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:48,height:48,borderRadius:14,background:config.gradient,marginBottom:8}}>
+          <span style={{fontSize:22,lineHeight:1}}>{config.icon}</span>
+        </div>
+        <h2 style={{fontSize:18,fontWeight:700,margin:"4px 0 0"}}>{config.label}のきもち</h2>
+        <p style={{fontSize:12,color:"var(--text-muted)",margin:0}}>{config.timeRange}</p>
+      </div>
+      <ScoreSlider value={score} onChange={setScore}/>
+      <StateCard score={score}/>
+      <div style={{marginTop:16}}>
+        <textarea value={comment} onChange={e=>setComment(e.target.value.slice(0,200))} placeholder="今のきもちをひとこと（書かなくてもOK）" rows={3}
+          style={{...S.input,resize:"none"}} onFocus={e=>e.target.style.borderColor="var(--accent-light)"} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
+        <p style={{textAlign:"right",fontSize:10,color:"var(--text-muted)",marginTop:4}}>{comment.length}/200</p>
+      </div>
+      <div style={{display:"flex",gap:10,marginTop:16}}>
+        <button onClick={onClose} style={{...S.btn,flex:1,padding:"12px 0",borderRadius:"var(--radius-sm)",background:"#F1F0EE",color:"var(--text-sub)",fontSize:14,fontWeight:500}}>やめる</button>
+        <button onClick={handleSave} style={{...S.btn,flex:1,padding:"12px 0",borderRadius:"var(--radius-sm)",background:"var(--accent)",color:"white",fontSize:14,fontWeight:600,boxShadow:"0 4px 12px rgba(108,92,231,0.3)"}}>
+          {existing?"書きなおす":"保存する"}
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+// TimeSlot Card
+function TimeSlotCard({slot,entry,isCurrent,onClick}){
+  const config=TIME_SLOT_CONFIG[slot];
+  const[hover,setHover]=useState(false);
+  return(
+    <button onClick={onClick} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+      style={{...S.btn,position:"relative",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
+        borderRadius:"var(--radius)",padding:"14px 8px",minHeight:110,width:"100%",
+        background:entry?config.gradient:"var(--card)",
+        border:isCurrent&&!entry?"2px solid var(--accent-light)":"1px solid var(--border)",
+        boxShadow:hover?"var(--shadow-md)":"var(--shadow-sm)",transform:hover?"translateY(-2px)":"none"}}>
+      {isCurrent&&!entry&&<span style={{position:"absolute",top:8,right:8,width:6,height:6,borderRadius:3,background:"var(--accent)"}}/>}
+      <span style={{fontSize:20,marginBottom:4,opacity:entry?1:0.6}}>{config.icon}</span>
+      <span style={{fontSize:11,fontWeight:500,color:entry?"rgba(255,255,255,0.85)":"var(--text-sub)",marginBottom:2}}>{config.label}</span>
+      {entry?(
+        <>
+          <span className="pop-in" key={entry.score} style={{fontSize:22,fontWeight:800,color:"white",textShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>{entry.score>0?`+${entry.score}`:entry.score}</span>
+          <div style={{marginTop:4}}><FaceIcon score={entry.score} size={24}/></div>
+        </>
+      ):(
+        <span style={{fontSize:11,color:"var(--text-muted)",marginTop:6,fontWeight:500}}>タップして書く</span>
+      )}
+    </button>
+  );
+}
+
+// MiniGraph
+function MiniGraph({entries}){
+  const data=useMemo(()=>{
+    const days=[];
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=toDateString(d);const de=entries.filter(e=>e.date===ds);days.push({label:DAY_LABELS[d.getDay()],avg:averageScore(de)});}
+    return days;
+  },[entries]);
+  if(!data.some(d=>d.avg!==null)) return(
+    <div style={{...S.card,textAlign:"center",padding:24}}>
+      <p style={{fontSize:13,color:"var(--text-muted)"}}>書き始めると、7日間のグラフが出るよ</p>
+    </div>
+  );
+  return(
+    <div style={S.card}>
+      <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:12}}>1週間の流れ</h3>
+      <ResponsiveContainer width="100%" height={100}>
+        <LineChart data={data} margin={{top:5,right:5,bottom:0,left:-25}}>
+          <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{fontSize:10,fill:"var(--text-muted)"}}/>
+          <YAxis domain={[-5,5]} axisLine={false} tickLine={false} tick={{fontSize:9,fill:"var(--text-muted)"}} ticks={[-5,0,5]}/>
+          <ReferenceLine y={0} stroke="var(--border)" strokeDasharray="3 3"/>
+          <Line type="monotone" dataKey="avg" stroke="var(--accent)" strokeWidth={2.5} dot={{r:3.5,fill:"var(--accent)",strokeWidth:2,stroke:"white"}} connectNulls/>
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+// Home Tab
+function HomeTab(){
+  const{state,dispatch}=useDiaryCtx();
+  const[editSlot,setEditSlot]=useState(null);
+  const todayStr=today();
+  const todayEntries=state.entries.filter(e=>e.date===todayStr);
+  const todayAvg=averageScore(todayEntries);
+  const currentSlot=getCurrentTimeSlot();
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:16}}>
+      {/* Hero card */}
+      <div style={{...S.card,textAlign:"center",padding:28,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%)",border:"none"}}>
+        <p style={{fontSize:12,fontWeight:600,color:"var(--accent)",letterSpacing:"0.05em",marginBottom:8}}>今日のきもち</p>
+        {todayAvg!==null?(
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16}}>
+            <span style={{fontSize:44,fontWeight:800,color:getScoreColor(todayAvg),lineHeight:1}}>{todayAvg>=0?"+":""}{todayAvg.toFixed(1)}</span>
+            <FaceIcon score={Math.round(todayAvg)} size={52}/>
+          </div>
+        ):<p style={{fontSize:32,color:"var(--text-muted)",fontWeight:300}}>---</p>}
+        <div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:12,background:"rgba(108,92,231,0.1)",borderRadius:20,padding:"4px 14px"}}>
+          <div style={{width:6,height:6,borderRadius:3,background:"var(--accent)"}}/>
+          <span style={{fontSize:12,fontWeight:500,color:"var(--accent)"}}>今日は {todayEntries.length}/4 回 書いた</span>
+        </div>
+      </div>
+
+      {/* Time slots */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
+        {TIME_SLOTS.map(slot=><TimeSlotCard key={slot} slot={slot} entry={todayEntries.find(e=>e.timeSlot===slot)} isCurrent={slot===currentSlot} onClick={()=>setEditSlot(slot)}/>)}
+      </div>
+
+      {/* 今日の状態カード（平均スコアから自動で表示） */}
+      {todayAvg!==null && <div style={{marginTop:-4}}><StateCard score={Math.round(todayAvg)}/></div>}
+
+      <MiniGraph entries={state.entries}/>
+      {editSlot&&<ScoreInputModal slot={editSlot} date={todayStr} onClose={()=>setEditSlot(null)} entries={state.entries} dispatch={dispatch}/>}
+    </div>
+  );
+}
+
+// Calendar Tab
+function CalendarTab(){
+  const{state,dispatch}=useDiaryCtx();
+  const now=new Date();
+  const[year,setYear]=useState(now.getFullYear());
+  const[month,setMonth]=useState(now.getMonth());
+  const[selectedDate,setSelectedDate]=useState(null);
+  const[editSlot,setEditSlot]=useState(null);
+  const dim=getDaysInMonth(year,month);
+  const fdow=getFirstDayOfMonth(year,month);
+  const todayStr=today();
+  const dayScores=useMemo(()=>{const m={};for(let d=1;d<=dim;d++){const ds=toDateString(new Date(year,month,d));m[ds]=averageScore(state.entries.filter(e=>e.date===ds));}return m;},[state.entries,year,month,dim]);
+  const goPrev=()=>{if(month===0){setYear(year-1);setMonth(11);}else setMonth(month-1);};
+  const goNext=()=>{if(month===11){setYear(year+1);setMonth(0);}else setMonth(month+1);};
+  const selEntries=selectedDate?state.entries.filter(e=>e.date===selectedDate):[];
+
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:16}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <button onClick={goPrev} style={{...S.btn,width:36,height:36,borderRadius:18,background:"var(--card)",color:"var(--text-sub)",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"var(--shadow-sm)"}}>←</button>
+        <h2 style={{fontSize:17,fontWeight:700}}>{year}年 {MONTH_LABELS[month]}</h2>
+        <button onClick={goNext} style={{...S.btn,width:36,height:36,borderRadius:18,background:"var(--card)",color:"var(--text-sub)",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"var(--shadow-sm)"}}>→</button>
+      </div>
+      <div style={{...S.card,padding:16}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4}}>
+          {DAY_LABELS.map((d,i)=><div key={d} style={{textAlign:"center",fontSize:10,fontWeight:600,padding:4,color:i===0?"#E17055":i===6?"#74b9ff":"var(--text-muted)"}}>{d}</div>)}
+          {Array.from({length:fdow}).map((_,i)=><div key={`e${i}`}/>)}
+          {Array.from({length:dim}).map((_,i)=>{
+            const day=i+1,ds=toDateString(new Date(year,month,day)),avg=dayScores[ds],isToday=ds===todayStr,isSel=ds===selectedDate;
+            const bg=avg!==null?getScoreColor(avg):"transparent";
+            return(
+              <button key={day} onClick={()=>setSelectedDate(ds)}
+                style={{...S.btn,aspectRatio:"1",display:"flex",alignItems:"center",justifyContent:"center",borderRadius:10,fontSize:12,fontWeight:isToday?700:400,
+                  background:avg!==null?bg.replace("rgb","rgba").replace(")",",0.2)"):"transparent",
+                  border:isSel?"2px solid var(--accent)":isToday?"2px solid var(--accent-light)":"2px solid transparent",
+                  color:isToday?"var(--accent)":"var(--text)"}}>
+                {day}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      {/* Legend */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,fontSize:10,color:"var(--text-muted)"}}>
+        <span style={{width:10,height:10,borderRadius:3,background:"rgba(225,112,85,0.25)",display:"inline-block"}}/>つらい
+        <span style={{width:10,height:10,borderRadius:3,background:"rgba(178,190,195,0.25)",display:"inline-block",marginLeft:6}}/>ふつう
+        <span style={{width:10,height:10,borderRadius:3,background:"rgba(0,184,148,0.25)",display:"inline-block",marginLeft:6}}/>うれしい
+      </div>
+
+      {selectedDate&&(
+        <Modal onClose={()=>setSelectedDate(null)}>
+          <h2 style={{fontSize:18,fontWeight:700,textAlign:"center",marginBottom:16}}>{formatDateJP(selectedDate)}</h2>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {TIME_SLOTS.map(slot=>{
+              const entry=selEntries.find(e=>e.timeSlot===slot);const cfg=TIME_SLOT_CONFIG[slot];
+              return(
+                <button key={slot} onClick={()=>setEditSlot(slot)} style={{...S.btn,display:"flex",alignItems:"center",gap:12,background:"#F8F6F2",borderRadius:"var(--radius-sm)",padding:14,textAlign:"left",width:"100%"}}>
+                  <div style={{width:40,height:40,borderRadius:12,background:cfg.gradient,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>{cfg.icon}</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <p style={{fontSize:12,fontWeight:600,color:"var(--text)",margin:0}}>{cfg.label}</p>
+                    {entry?(
+                      <div style={{display:"flex",alignItems:"center",gap:6,marginTop:2}}>
+                        <span style={{fontSize:16,fontWeight:700,color:getScoreColor(entry.score)}}>{entry.score>0?`+${entry.score}`:entry.score}</span>
+                        <FaceIcon score={entry.score} size={20}/>
+                        {entry.comment&&<span style={{fontSize:11,color:"var(--text-muted)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{entry.comment}</span>}
+                      </div>
+                    ):<p style={{fontSize:11,color:"var(--text-muted)",margin:"2px 0 0"}}>タップして書く</p>}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <button onClick={()=>setSelectedDate(null)} style={{...S.btn,width:"100%",marginTop:16,padding:"10px 0",borderRadius:"var(--radius-sm)",background:"#F1F0EE",color:"var(--text-sub)",fontSize:14,fontWeight:500}}>閉じる</button>
+        </Modal>
+      )}
+      {editSlot&&<ScoreInputModal slot={editSlot} date={selectedDate} onClose={()=>setEditSlot(null)} entries={state.entries} dispatch={dispatch}/>}
+    </div>
+  );
+}
+
+// ── Report helpers ──
+const RANGE_OPTIONS = [
+  { key:"1w", label:"1週間",  days:7 },
+  { key:"2w", label:"2週間",  days:14 },
+  { key:"1m", label:"1ヶ月",  days:30 },
+  { key:"2m", label:"2ヶ月",  days:60 },
+  { key:"3m", label:"3ヶ月",  days:90 },
+];
+
+function getDateRange(endDate, days) {
+  const dates = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(endDate);
+    d.setDate(d.getDate() - i);
+    dates.push(toDateString(d));
+  }
+  return dates;
+}
+
+function getPrevRange(endDate, days) {
+  const d = new Date(endDate);
+  d.setDate(d.getDate() - days);
+  return getDateRange(d, days);
+}
+
+function buildChartData(dates, entries, rangeKey) {
+  // Group dates intelligently based on range
+  if (rangeKey === "1w") {
+    // Daily
+    return dates.map(date => {
+      const de = entries.filter(e => e.date === date);
+      const d = new Date(date);
+      const r = { date, label: `${d.getMonth()+1}/${d.getDate()}`, avg: averageScore(de) };
+      for (const s of TIME_SLOTS) { const entry = de.find(e => e.timeSlot === s); r[s] = entry ? entry.score : null; }
+      return r;
+    });
+  } else if (rangeKey === "2w") {
+    // Daily
+    return dates.map(date => {
+      const de = entries.filter(e => e.date === date);
+      const d = new Date(date);
+      const r = { date, label: `${d.getMonth()+1}/${d.getDate()}`, avg: averageScore(de) };
+      for (const s of TIME_SLOTS) { const entry = de.find(e => e.timeSlot === s); r[s] = entry ? entry.score : null; }
+      return r;
+    });
+  } else {
+    // Group by week for 1m/2m/3m
+    const weeks = [];
+    let chunk = [];
+    dates.forEach((date, i) => {
+      chunk.push(date);
+      const d = new Date(date);
+      if (d.getDay() === 0 || i === dates.length - 1) {
+        const wEntries = entries.filter(e => chunk.includes(e.date));
+        const startD = new Date(chunk[0]);
+        const r = { date: chunk[0], label: `${startD.getMonth()+1}/${startD.getDate()}~`, avg: averageScore(wEntries) };
+        for (const s of TIME_SLOTS) {
+          const slotE = wEntries.filter(e => e.timeSlot === s);
+          r[s] = averageScore(slotE);
+        }
+        weeks.push(r);
+        chunk = [];
+      }
+    });
+    return weeks;
+  }
+}
+
+function generateRangeInsights(entries, prevEntries, days, rangeLabel) {
+  const ins = [];
+  if (!entries.length) { ins.push("まだ書いてないよ。少しずつ始めよう！"); return ins; }
+  const totalSlots = Math.round(days * 4);
+  const rate = Math.round((entries.length / totalSlots) * 100);
+  ins.push(`${totalSlots}回のうち ${entries.length}回 書いたよ（${rate}%）`);
+  const avg = averageScore(entries);
+  if (avg !== null) ins.push(`${rangeLabel}の平均: ${avg >= 0 ? "+" : ""}${avg.toFixed(1)}`);
+  const pAvg = averageScore(prevEntries);
+  if (avg !== null && pAvg !== null) {
+    const diff = avg - pAvg;
+    if (Math.abs(diff) >= 0.3) ins.push(`前と比べて ${diff > 0 ? "+" : ""}${diff.toFixed(1)} ${diff > 0 ? "上がった！" : "下がった"}`);
+    else ins.push("前と同じくらいだよ");
+  }
+  const bs = averageByTimeSlot(entries);
+  let ws = null, wa = Infinity, bsSlot = null, ba = -Infinity;
+  for (const s of TIME_SLOTS) {
+    if (bs[s].avg !== null && bs[s].avg < wa) { wa = bs[s].avg; ws = s; }
+    if (bs[s].avg !== null && bs[s].avg > ba) { ba = bs[s].avg; bsSlot = s; }
+  }
+  if (bsSlot && ws && bsSlot !== ws) {
+    ins.push(`${TIME_SLOT_CONFIG[bsSlot].label}が一番良い（${ba >= 0 ? "+" : ""}${ba.toFixed(1)}）、${TIME_SLOT_CONFIG[ws].label}は少し低いね（${wa >= 0 ? "+" : ""}${wa.toFixed(1)}）`);
+  } else if (ws) {
+    ins.push(`${TIME_SLOT_CONFIG[ws].label}のきもちが低いみたい → 過ごし方を変えてみよう`);
+  }
+  // Score trend (first half vs second half)
+  if (entries.length >= 8) {
+    const mid = Math.floor(entries.length / 2);
+    const sorted = [...entries].sort((a,b) => a.date.localeCompare(b.date));
+    const firstHalf = averageScore(sorted.slice(0, mid));
+    const secondHalf = averageScore(sorted.slice(mid));
+    if (firstHalf !== null && secondHalf !== null) {
+      const trend = secondHalf - firstHalf;
+      if (trend > 0.5) ins.push(`だんだん良くなってきてるよ ↗ (+${trend.toFixed(1)})`);
+      else if (trend < -0.5) ins.push(`少し下がってきてるかも ↘ (${trend.toFixed(1)})`);
+      else ins.push("ずっと落ち着いてるね");
+    }
+  }
+  return ins;
+}
+
+// Report Tab
+function ReportTab(){
+  const{state,dispatch}=useDiaryCtx();
+  const[rangeKey,setRangeKey]=useState("1w");
+  const[offset,setOffset]=useState(0);
+  const rangeOpt = RANGE_OPTIONS.find(r=>r.key===rangeKey);
+  const days = rangeOpt.days;
+
+  const endDate = useMemo(()=>{const d=new Date();d.setDate(d.getDate()+offset*days);return d;},[offset,days]);
+  const rangeDates = useMemo(()=>getDateRange(endDate,days),[endDate,days]);
+  const prevDates = useMemo(()=>getPrevRange(endDate,days),[endDate,days]);
+  const entries = useMemo(()=>state.entries.filter(e=>rangeDates.includes(e.date)),[state.entries,rangeDates]);
+  const prevEntries = useMemo(()=>state.entries.filter(e=>prevDates.includes(e.date)),[state.entries,prevDates]);
+
+  const avg=averageScore(entries), pAvg=averageScore(prevEntries);
+  const bySlot=averageByTimeSlot(entries);
+  const insights=generateRangeInsights(entries,prevEntries,days,rangeOpt.label);
+  const{best,worst}=findBestWorst(entries);
+  const comments=entries.filter(e=>e.comment.trim()).sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
+  const chartData=useMemo(()=>buildChartData(rangeDates,entries,rangeKey),[rangeDates,entries,rangeKey]);
+  const slotChartData=TIME_SLOTS.map(s=>({name:TIME_SLOT_CONFIG[s].label,avg:bySlot[s].avg??0,hasData:bySlot[s].avg!==null}));
+  const SLOT_COLORS_CHART={morning:"#F8A15A",afternoon:"#74b9ff",evening:"#a29bfe",night:"#6C5CE7"};
+
+  const totalSlots = Math.round(days*4);
+  const rangeStr = rangeDates.length>=2 ? `${new Date(rangeDates[0]).getMonth()+1}/${new Date(rangeDates[0]).getDate()} – ${new Date(rangeDates[rangeDates.length-1]).getMonth()+1}/${new Date(rangeDates[rangeDates.length-1]).getDate()}` : "";
+  const isLatest = offset >= 0;
+
+  // Weekly note (use week key of end date)
+  const weekKey=useMemo(()=>getWeekKey(endDate),[endDate]);
+  const weekNote=state.weeklyNotes[weekKey]||"";
+
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:16}}>
+      {/* Range selector pills */}
+      <div style={{display:"flex",gap:6,justifyContent:"center",flexWrap:"wrap"}}>
+        {RANGE_OPTIONS.map(r=>(
+          <button key={r.key} onClick={()=>{setRangeKey(r.key);setOffset(0);}}
+            style={{...S.btn,padding:"6px 14px",borderRadius:20,fontSize:12,fontWeight:600,
+              background:rangeKey===r.key?"var(--accent)":"var(--card)",
+              color:rangeKey===r.key?"white":"var(--text-sub)",
+              boxShadow:rangeKey===r.key?"0 4px 12px rgba(108,92,231,0.3)":"var(--shadow-sm)",
+              border:rangeKey===r.key?"none":"1px solid var(--border)"}}>
+            {r.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Period nav */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <button onClick={()=>setOffset(offset-1)} style={{...S.btn,width:36,height:36,borderRadius:18,background:"var(--card)",color:"var(--text-sub)",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"var(--shadow-sm)",border:"1px solid var(--border)"}}>←</button>
+        <div style={{textAlign:"center"}}>
+          <p style={{fontSize:14,fontWeight:600,margin:0}}>{rangeStr}</p>
+          {isLatest&&<p style={{fontSize:10,fontWeight:600,color:"var(--accent)",margin:0}}>今</p>}
+        </div>
+        <button onClick={()=>setOffset(Math.min(0,offset+1))} disabled={isLatest}
+          style={{...S.btn,width:36,height:36,borderRadius:18,background:"var(--card)",color:isLatest?"var(--text-muted)":"var(--text-sub)",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"var(--shadow-sm)",border:"1px solid var(--border)",opacity:isLatest?0.4:1}}>→</button>
+      </div>
+
+      {/* Summary */}
+      <div style={{...S.card,textAlign:"center",padding:24,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%)",border:"none"}}>
+        <p style={{fontSize:11,fontWeight:600,color:"var(--accent)",letterSpacing:"0.06em",marginBottom:6}}>{rangeOpt.label}の平均</p>
+        {avg!==null?<span style={{fontSize:40,fontWeight:800,color:getScoreColor(avg)}}>{avg>=0?"+":""}{avg.toFixed(1)}</span>
+          :<span style={{fontSize:32,color:"var(--text-muted)",fontWeight:300}}>---</span>}
+        {avg!==null&&pAvg!==null&&(
+          <p style={{fontSize:12,color:"var(--text-sub)",marginTop:6}}>前と比べて <span style={{fontWeight:700,color:avg-pAvg>0?"var(--positive)":avg-pAvg<0?"var(--negative)":"var(--text-muted)"}}>{avg-pAvg>0?"↑":avg-pAvg<0?"↓":"→"}{Math.abs(avg-pAvg).toFixed(1)}</span></p>
+        )}
+        <p style={{fontSize:11,color:"var(--text-muted)",marginTop:8}}>{totalSlots}回のうち {entries.length}回 書いた</p>
+      </div>
+
+      {/* Insights */}
+      <div style={S.card}>
+        <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:10}}>気づいたこと</h3>
+        {insights.map((ins,i)=><div key={i} style={{display:"flex",gap:8,marginBottom:8,alignItems:"flex-start"}}><div style={{width:6,height:6,borderRadius:3,background:"var(--accent)",marginTop:5,flexShrink:0}}/><span style={{fontSize:13,color:"var(--text)",lineHeight:1.5}}>{ins}</span></div>)}
+      </div>
+
+      {/* Trend */}
+      <div style={S.card}>
+        <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:12}}>
+          {rangeKey==="1w"||rangeKey==="2w"?"毎日の流れ":"週ごとの流れ"}
+        </h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart data={chartData} margin={{top:5,right:5,bottom:0,left:-25}}>
+            <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{fontSize:9,fill:"var(--text-muted)"}} interval={rangeKey==="2w"?1:rangeKey==="1w"?0:"preserveStartEnd"}/>
+            <YAxis domain={[-5,5]} axisLine={false} tickLine={false} tick={{fontSize:9,fill:"var(--text-muted)"}} ticks={[-5,0,5]}/>
+            <ReferenceLine y={0} stroke="var(--border)" strokeDasharray="3 3"/>
+            <Tooltip contentStyle={{background:"white",border:"1px solid var(--border)",borderRadius:10,fontSize:12,boxShadow:"var(--shadow-md)"}}/>
+            {Object.entries(SLOT_COLORS_CHART).map(([k,c])=><Line key={k} type="monotone" dataKey={k} stroke={c} strokeWidth={1.5} strokeOpacity={0.35} dot={false} connectNulls/>)}
+            <Line type="monotone" dataKey="avg" stroke="var(--accent)" strokeWidth={3} dot={{r:3,fill:"var(--accent)",strokeWidth:2,stroke:"white"}} connectNulls/>
+          </LineChart>
+        </ResponsiveContainer>
+        <div style={{display:"flex",flexWrap:"wrap",gap:12,marginTop:8,justifyContent:"center"}}>
+          {[{c:"var(--accent)",l:"平均",bold:true},...Object.entries(SLOT_COLORS_CHART).map(([k,c])=>({c,l:TIME_SLOT_CONFIG[k].label}))].map(x=>
+            <div key={x.l} style={{display:"flex",alignItems:"center",gap:4}}>
+              <span style={{width:10,height:x.bold?3:2,borderRadius:1,background:x.c,display:"inline-block"}}/>
+              <span style={{fontSize:10,color:"var(--text-muted)"}}>{x.l}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Best/Worst */}
+      {(best||worst)&&(
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+          {[{label:"一番良かった時",entry:best,bg:"linear-gradient(135deg,#d5f5e3,#a3e4d7)"},{label:"一番辛かった時",entry:worst,bg:"linear-gradient(135deg,#fadbd8,#f5b7b1)"}].map(({label,entry,bg})=>(
+            <div key={label} style={{...S.card,padding:16,background:bg,border:"none"}}>
+              <p style={{fontSize:10,fontWeight:600,color:"var(--text-sub)",marginBottom:6}}>{label}</p>
+              {entry?(
+                <>
+                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                    <span style={{fontSize:22,fontWeight:800,color:getScoreColor(entry.score)}}>{entry.score>0?`+${entry.score}`:entry.score}</span>
+                    <FaceIcon score={entry.score} size={24}/>
+                  </div>
+                  <p style={{fontSize:10,color:"var(--text-sub)",marginTop:6}}>{formatDateJP(entry.date)} {TIME_SLOT_CONFIG[entry.timeSlot].label}</p>
+                  {entry.comment&&<p style={{fontSize:10,color:"var(--text-sub)",marginTop:2,overflow:"hidden",textOverflow:"ellipsis",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{entry.comment}</p>}
+                </>
+              ):<p style={{fontSize:11,color:"var(--text-muted)"}}>---</p>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Time slot comparison */}
+      <div style={S.card}>
+        <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:12}}>時間帯別</h3>
+        <ResponsiveContainer width="100%" height={140}>
+          <BarChart data={slotChartData} margin={{top:5,right:5,bottom:0,left:-25}}>
+            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize:11,fill:"var(--text-muted)"}}/>
+            <YAxis domain={[-5,5]} axisLine={false} tickLine={false} tick={{fontSize:9,fill:"var(--text-muted)"}} ticks={[-5,0,5]}/>
+            <ReferenceLine y={0} stroke="var(--border)" strokeDasharray="3 3"/>
+            <Bar dataKey="avg" radius={[6,6,0,0]}>{slotChartData.map((e,i)=><Cell key={i} fill={e.hasData?getScoreColor(e.avg):"#E8E6E3"} opacity={e.hasData?0.8:0.4}/>)}</Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Comments */}
+      <div style={S.card}>
+        <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:12}}>書いたメモ ({comments.length})</h3>
+        {comments.length===0?<p style={{fontSize:12,color:"var(--text-muted)",textAlign:"center"}}>この期間に書いたメモはないよ</p>
+          :comments.slice(0,20).map(e=>(
+            <div key={e.id} style={{display:"flex",gap:10,marginBottom:12}}>
+              <div style={{width:3,borderRadius:2,flexShrink:0,background:getScoreColor(e.score)}}/>
+              <div><p style={{fontSize:10,color:"var(--text-muted)",margin:0}}>{formatDateJP(e.date)} {TIME_SLOT_CONFIG[e.timeSlot].label}</p><p style={{fontSize:13,color:"var(--text)",margin:"2px 0 0",lineHeight:1.5}}>{e.comment}</p></div>
+            </div>
+          ))}
+        {comments.length>20&&<p style={{fontSize:11,color:"var(--text-muted)",textAlign:"center"}}>ほかに あと {comments.length-20}件</p>}
+      </div>
+
+      {/* Reflection */}
+      <div style={S.card}>
+        <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:8}}>ふりかえり</h3>
+        <textarea value={weekNote} onChange={e=>dispatch({type:"SET_WEEKLY_NOTE",weekKey,note:e.target.value})}
+          placeholder="この期間のこと、思ったことを書いてみよう..." rows={3} style={{...S.input,resize:"none"}}
+          onFocus={e=>e.target.style.borderColor="var(--accent-light)"} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
+      </div>
+    </div>
+  );
+}
+
+// Settings Tab
+function SettingsTab(){
+  const{state,dispatch}=useDiaryCtx();
+  const fileRef=useRef(null);
+  const[importMsg,setImportMsg]=useState(null);
+  const[showClear,setShowClear]=useState(false);
+  const[aiCopied,setAiCopied]=useState(false);
+  const handleExport=()=>{const json=exportAllData();const blob=new Blob([json],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`metacog_backup_${today()}.json`;a.click();URL.revokeObjectURL(url);};
+  const handleImport=(e)=>{const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=(ev)=>{const r=importData(ev.target.result);setImportMsg(r.message);if(r.success)window.location.reload();};reader.readAsText(file);e.target.value="";};
+  const handleAICopy=()=>{const text=formatForAI(state.entries,state.stateGuide);navigator.clipboard.writeText(text).then(()=>{setAiCopied(true);setTimeout(()=>setAiCopied(false),2500);}).catch(()=>{const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);setAiCopied(true);setTimeout(()=>setAiCopied(false),2500);});};
+  const btnStyle={...S.btn,width:"100%",padding:"12px 0",borderRadius:"var(--radius-sm)",background:"#F1F0EE",color:"var(--text)",fontSize:14,fontWeight:500,marginBottom:8};
+
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:16}}>
+      <div style={S.card}>
+        <label style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",display:"block",marginBottom:8}}>名前</label>
+        <input type="text" value={state.settings.userName} onChange={e=>dispatch({type:"UPDATE_SETTINGS",settings:{userName:e.target.value}})} placeholder="あなたの名前..." style={S.input}
+          onFocus={e=>e.target.style.borderColor="var(--accent-light)"} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
+      </div>
+      <div style={S.card}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div><p style={{fontSize:14,fontWeight:500,color:"var(--text)",margin:0}}>お知らせ</p><p style={{fontSize:11,color:"var(--text-muted)",margin:"2px 0 0"}}>もうすぐ使えるよ</p></div>
+          <div onClick={()=>dispatch({type:"UPDATE_SETTINGS",settings:{notificationsEnabled:!state.settings.notificationsEnabled}})}
+            className="toggle-track" style={{background:state.settings.notificationsEnabled?"var(--accent)":"#D1D1D6"}}>
+            <span className="toggle-thumb" style={{transform:state.settings.notificationsEnabled?"translateX(18px)":"translateX(4px)"}}/>
+          </div>
+        </div>
+      </div>
+      <div style={{...S.card,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%)",border:"none"}}>
+        <h3 style={{fontSize:12,fontWeight:600,color:"var(--accent)",marginBottom:6}}>✦ AI分析</h3>
+        <p style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.6,margin:"0 0 12px"}}>
+          記録と状態表をまとめてコピーして、ChatGPTやClaudeに貼り付けると
+          グラフ・傾向分析・セルフケア提案などをしてもらえるよ
+        </p>
+        <button onClick={handleAICopy}
+          style={{...btnStyle,marginBottom:0,
+            background:aiCopied?"var(--positive)":"var(--accent)",
+            color:"white",fontWeight:600,
+            boxShadow:aiCopied?"none":"0 4px 12px rgba(108,92,231,0.3)"}}>
+          {aiCopied?"✓ コピーした！AIに貼り付けよう":"📋 AI分析用にコピーする"}
+        </button>
+        {state.entries.length===0&&<p style={{fontSize:10,color:"var(--text-muted)",textAlign:"center",marginTop:6}}>※ まだ記録がないよ。記録してからコピーしてね</p>}
+      </div>
+      <div style={S.card}>
+        <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:12}}>データ</h3>
+        <button onClick={handleExport} style={btnStyle}>データを保存する (JSON)</button>
+        <button onClick={()=>fileRef.current?.click()} style={btnStyle}>データを読み込む</button>
+        <input ref={fileRef} type="file" accept=".json" onChange={handleImport} style={{display:"none"}}/>
+        {importMsg&&<p style={{fontSize:12,color:"var(--positive)",textAlign:"center",marginBottom:8}}>{importMsg}</p>}
+        {!showClear?(
+          <button onClick={()=>setShowClear(true)} style={{...btnStyle,background:"transparent",color:"var(--negative)",border:"1px solid rgba(225,112,85,0.2)"}}>全部消す</button>
+        ):(
+          <div style={{border:"1px solid rgba(225,112,85,0.3)",borderRadius:"var(--radius-sm)",padding:16}}>
+            <p style={{fontSize:12,color:"var(--negative)",textAlign:"center",marginBottom:12}}>もう戻せないよ。本当に消す？</p>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={()=>setShowClear(false)} style={{...S.btn,flex:1,padding:"10px 0",borderRadius:8,background:"#F1F0EE",color:"var(--text-sub)",fontSize:13,fontWeight:500}}>やめる</button>
+              <button onClick={()=>{clearAllData();window.location.reload();}} style={{...S.btn,flex:1,padding:"10px 0",borderRadius:8,background:"var(--negative)",color:"white",fontSize:13,fontWeight:600}}>消す</button>
+            </div>
+          </div>
+        )}
+      </div>
+      <PrivacyBanner/>
+      <p style={{fontSize:10,color:"var(--text-muted)",textAlign:"center",padding:"16px 0",fontWeight:500}}>きもち日記 v0.1.0</p>
+    </div>
+  );
+}
+
+// セルフケア（状態表）タブ — 自分用にカスタマイズ可能
+function SelfCareTab(){
+  const{state,dispatch}=useDiaryCtx();
+  const[expanded,setExpanded]=useState("0");
+  const[showReset,setShowReset]=useState(false);
+  const guide = state.stateGuide || cloneDefaultGuide();
+
+  const update=(key,patch)=>dispatch({type:"UPDATE_STATE_GUIDE",key,patch});
+  const updateSelfCareText=(key,text)=>{
+    const lines = text.split("\n").map(s=>s.trim()).filter(s=>s.length>0);
+    update(key,{selfCare:lines});
+  };
+
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      {/* 説明カード */}
+      <div style={{...S.card,padding:18,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",border:"none"}}>
+        <p style={{fontSize:11,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:0}}>じぶんの状態表</p>
+        <h2 style={{fontSize:17,fontWeight:700,margin:"4px 0 6px"}}>状態とセルフケアを書こう</h2>
+        <p style={{fontSize:12,color:"var(--text-sub)",lineHeight:1.6,margin:0}}>
+          -5〜+5 のそれぞれに「どんな様子か」「何をすると楽になるか」を書いておくと、
+          きもちを記録した時に自分専用のセルフケアが出てくるよ。
+        </p>
+      </div>
+
+      {/* リセットボタン */}
+      <div style={{display:"flex",justifyContent:"flex-end"}}>
+        {!showReset?(
+          <button onClick={()=>setShowReset(true)} style={{...S.btn,fontSize:11,color:"var(--text-muted)",background:"transparent",padding:"6px 10px",borderRadius:8,border:"1px solid var(--border)"}}>
+            ↺ デフォルトに戻す
+          </button>
+        ):(
+          <div style={{display:"flex",gap:6,alignItems:"center"}}>
+            <span style={{fontSize:11,color:"var(--text-sub)"}}>自分の編集が消えるよ</span>
+            <button onClick={()=>setShowReset(false)} style={{...S.btn,fontSize:11,padding:"6px 10px",borderRadius:8,background:"#F1F0EE",color:"var(--text-sub)"}}>やめる</button>
+            <button onClick={()=>{dispatch({type:"RESET_STATE_GUIDE"});setShowReset(false);}} style={{...S.btn,fontSize:11,padding:"6px 10px",borderRadius:8,background:"var(--negative)",color:"white",fontWeight:600}}>戻す</button>
+          </div>
+        )}
+      </div>
+
+      {/* 11行のカード */}
+      {STATE_KEYS.map(key=>{
+        const score = parseInt(key,10);
+        const row = guide[key] || DEFAULT_STATE_GUIDE[key];
+        const color = getScoreColor(score);
+        const rgb = (color.match(/\d+/g)||["108","92","231"]).slice(0,3).join(",");
+        const isOpen = expanded===key;
+        const selfCareText = (row.selfCare||[]).join("\n");
+        return(
+          <div key={key} style={{
+            background:"var(--card)",
+            borderRadius:"var(--radius)",
+            border:`1px solid rgba(${rgb},${isOpen?0.4:0.18})`,
+            boxShadow:isOpen?"var(--shadow-md)":"var(--shadow-sm)",
+            overflow:"hidden",
+            transition:"all 0.2s"
+          }}>
+            <button onClick={()=>setExpanded(isOpen?null:key)} style={{
+              ...S.btn, width:"100%", display:"flex", alignItems:"center", gap:12,
+              padding:"14px 16px", background:`linear-gradient(90deg, rgba(${rgb},0.10), rgba(${rgb},0.02))`,
+              textAlign:"left"
+            }}>
+              <div style={{
+                width:42,height:42,borderRadius:12,
+                background:`rgba(${rgb},0.18)`,
+                display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0
+              }}>
+                <span style={{fontSize:16,fontWeight:800,color}}>{score>0?`+${score}`:score}</span>
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <p style={{fontSize:14,fontWeight:700,color:"var(--text)",margin:0,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{row.title || "（タイトル未設定）"}</p>
+                <p style={{fontSize:11,color:"var(--text-muted)",margin:"2px 0 0",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>セルフケア {(row.selfCare||[]).length}件</p>
+              </div>
+              <FaceIcon score={score} size={26}/>
+              <span style={{fontSize:14,color:"var(--text-muted)",marginLeft:4,transition:"transform 0.2s",transform:isOpen?"rotate(90deg)":"none"}}>›</span>
+            </button>
+
+            {isOpen && (
+              <div style={{padding:"12px 16px 18px",borderTop:`1px dashed rgba(${rgb},0.25)`}}>
+                <label style={{fontSize:11,fontWeight:600,color:"var(--text-sub)",display:"block",marginTop:6,marginBottom:4}}>状態のタイトル</label>
+                <input type="text" value={row.title} onChange={e=>update(key,{title:e.target.value})}
+                  placeholder="例：とても元気" style={{...S.input,fontSize:13}}
+                  onFocus={e=>e.target.style.borderColor=color} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
+
+                <label style={{fontSize:11,fontWeight:600,color:"var(--text-sub)",display:"block",marginTop:12,marginBottom:4}}>こんな様子・行動が出る</label>
+                <textarea value={row.behavior} onChange={e=>update(key,{behavior:e.target.value})}
+                  rows={2} placeholder="例：早口になる・予定を詰めたくなる"
+                  style={{...S.input,fontSize:13,resize:"vertical",lineHeight:1.5}}
+                  onFocus={e=>e.target.style.borderColor=color} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
+
+                <label style={{fontSize:11,fontWeight:600,color:"var(--text-sub)",display:"block",marginTop:12,marginBottom:4}}>
+                  わたしのセルフケア <span style={{color:"var(--text-muted)",fontWeight:400}}>（1行に1つ）</span>
+                </label>
+                <textarea defaultValue={selfCareText} key={key+"-sc"} onBlur={e=>updateSelfCareText(key,e.target.value)}
+                  rows={Math.max(3,(row.selfCare||[]).length+1)}
+                  placeholder={"例：\n深呼吸をする\n白湯を飲む\n短く横になる"}
+                  style={{...S.input,fontSize:13,resize:"vertical",lineHeight:1.6}}
+                  onFocus={e=>e.target.style.borderColor=color}/>
+                <p style={{fontSize:10,color:"var(--text-muted)",marginTop:6}}>※ ここから外れると自動で保存されるよ</p>
+
+                {/* プレビュー */}
+                <div style={{marginTop:14}}>
+                  <p style={{fontSize:10,fontWeight:600,color:"var(--text-muted)",letterSpacing:"0.05em",marginBottom:4}}>↓ きもちを記録した時に出る表示</p>
+                  <StateCard score={score} compact/>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════
+// オンボーディング（初回ガイド）
+// ═══════════════════════════════════════
+const ONBOARDING_KEY = "metacog_onboarding_done";
+function Onboarding({onDone}){
+  const[page,setPage]=useState(0);
+  const pages=[
+    {
+      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#6C5CE7" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#6C5CE7" fontFamily="sans-serif">♡</text></svg>,
+      title:"きもち日記へようこそ",
+      body:"毎日のきもちを記録して、自分を知るための日記アプリです。\n朝・昼・夕・夜の4つの時間帯にきもちを -5〜+5 で記録できます。"
+    },
+    {
+      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#00B894" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#00B894" fontFamily="sans-serif">✦</text></svg>,
+      title:"セルフケアを見つけよう",
+      body:"スコアを選ぶと、その状態に合ったセルフケアが表示されます。\n「セルフケア」タブから自分専用にカスタマイズもできるよ。"
+    },
+    {
+      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#6C5CE7" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#6C5CE7" fontFamily="sans-serif">🔒</text></svg>,
+      title:"あなたのデータは安全です",
+      body:"記録はすべて、あなたのスマホの中だけに保存されます。\nサーバーへの送信やアカウント登録は一切ありません。\n安心して使ってください。"
+    }
+  ];
+  const p=pages[page];
+  const isLast=page===pages.length-1;
+
+  return(
+    <div style={{
+      position:"fixed",inset:0,zIndex:100,
+      background:"var(--bg)",
+      display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
+      padding:24
+    }}>
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",maxWidth:360,textAlign:"center",gap:20}}>
+        {p.icon}
+        <h1 style={{fontSize:22,fontWeight:700,color:"var(--text)",lineHeight:1.4}}>{p.title}</h1>
+        <p style={{fontSize:14,color:"var(--text-sub)",lineHeight:1.8,whiteSpace:"pre-line"}}>{p.body}</p>
+      </div>
+
+      {/* ドットインジケーター */}
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        {pages.map((_,i)=>(
+          <div key={i} style={{
+            width:i===page?24:8,height:8,borderRadius:4,
+            background:i===page?"var(--accent)":"var(--border)",
+            transition:"all 0.3s"
+          }}/>
+        ))}
+      </div>
+
+      {/* ボタン */}
+      <div style={{display:"flex",gap:10,width:"100%",maxWidth:360}}>
+        {page>0&&(
+          <button onClick={()=>setPage(page-1)} style={{
+            ...S.btn,flex:1,padding:"14px 0",borderRadius:12,
+            background:"#F1F0EE",color:"var(--text-sub)",fontSize:15,fontWeight:500
+          }}>もどる</button>
+        )}
+        <button onClick={()=>{
+          if(isLast){localStorage.setItem(ONBOARDING_KEY,"1");onDone();}
+          else setPage(page+1);
+        }} style={{
+          ...S.btn,flex:1,padding:"14px 0",borderRadius:12,
+          background:"var(--accent)",color:"white",fontSize:15,fontWeight:600,
+          boxShadow:"0 4px 16px rgba(108,92,231,0.3)"
+        }}>{isLast?"始めよう！":"つぎへ"}</button>
+      </div>
+
+      {/* スキップ */}
+      {!isLast&&(
+        <button onClick={()=>{localStorage.setItem(ONBOARDING_KEY,"1");onDone();}}
+          style={{...S.btn,background:"transparent",color:"var(--text-muted)",fontSize:12,marginTop:16,padding:"8px 16px"}}>
+          スキップ
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════
+// プライバシーバナー（設定タブ内にも常時表示）
+// ═══════════════════════════════════════
+function PrivacyBanner(){
+  return(
+    <div style={{
+      ...S.card,padding:16,
+      background:"linear-gradient(135deg, #e8f8f5 0%, #d5f5e3 100%)",
+      border:"none"
+    }}>
+      <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+        <div style={{width:32,height:32,borderRadius:10,background:"rgba(0,184,148,0.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>🔒</div>
+        <div>
+          <p style={{fontSize:12,fontWeight:700,color:"var(--text)",margin:"0 0 4px"}}>プライバシーについて</p>
+          <p style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.6,margin:0}}>
+            あなたの記録はすべて、このスマホ（ブラウザ）の中だけに保存されます。
+            インターネットに送信されることはありません。アカウント登録も不要です。
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// App
+function App(){
+  const[showOnboarding,setShowOnboarding]=useState(()=>!localStorage.getItem(ONBOARDING_KEY));
+  const{state}=useDiaryCtx();
+  const tab=()=>{switch(state.activeTab){case"home":return<HomeTab/>;case"calendar":return<CalendarTab/>;case"report":return<ReportTab/>;case"selfcare":return<SelfCareTab/>;case"settings":return<SettingsTab/>;}};
+  if(showOnboarding) return <Onboarding onDone={()=>setShowOnboarding(false)}/>;
+  return<Layout>{tab()}</Layout>;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode><DiaryProvider><App/></DiaryProvider></React.StrictMode>
+);
+</script>
+</body>
+</html>
