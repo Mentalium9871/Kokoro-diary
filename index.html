@@ -8,11 +8,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="きもち日記">
-<meta name="theme-color" content="#6C5CE7">
+<meta name="theme-color" content="#C05F38">
+<!-- v0.3.0 ぬくもり手帳テーマ -->
 <link rel="manifest" href="./manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://cdn.jsdelivr.net/npm/prop-types@15.8.1/prop-types.min.js" crossorigin></script>
@@ -39,27 +40,28 @@ if ('serviceWorker' in navigator) {
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #F8F6F2;
-  --card: #FFFFFF;
-  --card-hover: #FAFAFA;
-  --text: #1A1A2E;
-  --text-sub: #6E6E80;
-  --text-muted: #A0A0B0;
-  --border: rgba(0,0,0,0.06);
-  --accent: #6C5CE7;
-  --accent-light: #A29BFE;
-  --positive: #00B894;
-  --negative: #E17055;
-  --warm: #FDCB6E;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
-  --radius: 16px;
-  --radius-sm: 10px;
+  /* ぬくもり手帳テーマ: 温かい紙×テラコッタ×丸ゴシック */
+  --bg: #FAF3E7;
+  --card: #FFFDF8;
+  --card-hover: #FFF8EE;
+  --text: #3A342B;
+  --text-sub: #7A7062;
+  --text-muted: #A89C8C;
+  --border: rgba(90,70,40,0.10);
+  --accent: #C05F38;
+  --accent-light: #E8A683;
+  --positive: #3E8E5A;
+  --negative: #D9704F;
+  --warm: #E8B94F;
+  --shadow-sm: 0 1px 3px rgba(122,90,50,0.06), 0 1px 2px rgba(122,90,50,0.05);
+  --shadow-md: 0 4px 16px rgba(122,90,50,0.10), 0 1px 3px rgba(122,90,50,0.06);
+  --shadow-lg: 0 8px 32px rgba(122,90,50,0.14);
+  --radius: 20px;
+  --radius-sm: 12px;
 }
 
 body {
-  font-family: 'Outfit', 'Noto Sans JP', 'Inter', sans-serif;
+  font-family: 'Zen Maru Gothic', 'Noto Sans JP', 'Meiryo', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -81,7 +83,7 @@ body {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #6C5CE7, #a29bfe, #fd79a8);
+  background: linear-gradient(135deg, #C05F38, #E8A683, #D98BAF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -91,21 +93,21 @@ body {
 input[type="range"] {
   -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
   border-radius: 3px; outline: none;
-  background: linear-gradient(to right, #E17055, #FDCB6E, #dfe6e9, #74b9ff, #00B894);
+  background: linear-gradient(to right, #D9704F, #E8B94F, #E7E0D3, #A3CDA8, #3E8E5A);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; width: 32px; height: 32px; border-radius: 50%;
   background: white; cursor: pointer;
-  box-shadow: 0 2px 12px rgba(108,92,231,0.3), 0 0 0 3px rgba(108,92,231,0.15);
+  box-shadow: 0 2px 12px rgba(192,95,56,0.3), 0 0 0 3px rgba(192,95,56,0.15);
   transition: box-shadow 0.2s;
 }
 input[type="range"]::-webkit-slider-thumb:hover {
-  box-shadow: 0 2px 16px rgba(108,92,231,0.4), 0 0 0 5px rgba(108,92,231,0.12);
+  box-shadow: 0 2px 16px rgba(192,95,56,0.4), 0 0 0 5px rgba(192,95,56,0.12);
 }
 input[type="range"]::-moz-range-thumb {
   width: 32px; height: 32px; border-radius: 50%; border: none;
   background: white; cursor: pointer;
-  box-shadow: 0 2px 12px rgba(108,92,231,0.3), 0 0 0 3px rgba(108,92,231,0.15);
+  box-shadow: 0 2px 12px rgba(192,95,56,0.3), 0 0 0 3px rgba(192,95,56,0.15);
 }
 
 .toggle-track { width: 44px; height: 26px; border-radius: 13px; cursor: pointer; position: relative; transition: background 0.3s; }
@@ -129,9 +131,9 @@ const { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Refer
 const TIME_SLOTS = ["morning", "afternoon", "evening", "night"];
 const TIME_SLOT_CONFIG = {
   morning:   { label: "朝",   timeRange: "6:00–10:00",  gradient: "linear-gradient(135deg, #FFECD2 0%, #FCB69F 100%)", icon: "☀", color: "#F8A15A" },
-  afternoon: { label: "昼",   timeRange: "11:00–14:00", gradient: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", icon: "◐", color: "#74b9ff" },
-  evening:   { label: "夕方", timeRange: "15:00–18:00", gradient: "linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)", icon: "◑", color: "#a29bfe" },
-  night:     { label: "夜",   timeRange: "19:00–23:00", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", icon: "☽", color: "#6C5CE7" },
+  afternoon: { label: "昼",   timeRange: "11:00–14:00", gradient: "linear-gradient(135deg, #B7D3EC 0%, #DCEDF7 100%)", icon: "◐", color: "#6FA8CE" },
+  evening:   { label: "夕方", timeRange: "15:00–18:00", gradient: "linear-gradient(135deg, #F6CD9B 0%, #CFA3E0 100%)", icon: "◑", color: "#B08BC9" },
+  night:     { label: "夜",   timeRange: "19:00–23:00", gradient: "linear-gradient(135deg, #8C97D1 0%, #6F79B8 100%)", icon: "☽", color: "#6F79B8" },
 };
 const DAY_LABELS = ["日","月","火","水","木","金","土"];
 const MONTH_LABELS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
@@ -150,7 +152,7 @@ function getWeekDates(date) { const{start}=getWeekRange(date); return Array.from
 function getWeekKey(date) { const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())); const dn=d.getUTCDay()||7; d.setUTCDate(d.getUTCDate()+4-dn); const ys=new Date(Date.UTC(d.getUTCFullYear(),0,1)); const w=Math.ceil(((d.getTime()-ys.getTime())/86400000+1)/7); return `${d.getUTCFullYear()}-W${String(w).padStart(2,'0')}`; }
 
 // Score → color (bright palette)
-const SCORE_COLORS = [[-5,"#E17055"],[-3,"#F39C6B"],[-1,"#FDCB6E"],[0,"#B2BEC3"],[1,"#81ECEC"],[3,"#55EFC4"],[5,"#00B894"]];
+const SCORE_COLORS = [[-5,"#D9704F"],[-3,"#E89A6B"],[-1,"#E8B94F"],[0,"#B8AE9E"],[1,"#A3CDA8"],[3,"#6FBF8B"],[5,"#3E8E5A"]];
 function getScoreColor(score) {
   const c=Math.max(-5,Math.min(5,score));
   for(let i=0;i<SCORE_COLORS.length-1;i++){
@@ -192,14 +194,320 @@ function lookupStateGuide(guide, score){
   return (guide && guide[k]) || DEFAULT_STATE_GUIDE[k];
 }
 
+// ═══════════════════════════════════════
+// セルフケア・ライブラリ（道具箱）
+// カテゴリ: now=いますぐ(体から) / feel=気持ち / think=考え / base=土台
+// scene: work=職場・事業所 / home=家 / any=どこでも
+// states: [min,max] 提案対象のスコア範囲
+// ═══════════════════════════════════════
+const CARE_CATEGORIES = {
+  now:   { label:"いますぐ", sub:"体から落ち着かせる", color:"#178089", bg:"rgba(23,128,137,0.10)", icon:"🧊" },
+  feel:  { label:"気持ち",   sub:"気持ちから選ぶ",     color:"#B0507A", bg:"rgba(176,80,122,0.10)", icon:"💗" },
+  think: { label:"考え",     sub:"考えと付き合う",     color:"#5B57A6", bg:"rgba(91,87,166,0.10)",  icon:"💭" },
+  base:  { label:"土台",     sub:"生活を整える",       color:"#3C8A54", bg:"rgba(60,138,84,0.10)",  icon:"🌱" },
+  joy:   { label:"ごほうび", sub:"ごほうび・たのしみ", color:"#D9822B", bg:"rgba(217,130,43,0.10)", icon:"🍦" },
+  fit:   { label:"からだ",   sub:"からだ・リズムを整える", color:"#5B7FA6", bg:"rgba(91,127,166,0.10)", icon:"🏃" },
+};
+const SCENES = { any:{label:"どこでも",icon:"✳"}, work:{label:"職場で",icon:"🏢"}, home:{label:"家で",icon:"🏠"} };
+
+// 「こんな時は？」ナビ（PDFの感情ナビのアプリ版）
+const SITUATIONS = [
+  { id:"surge",     label:"気持ちがあふれそう・爆発しそう", icon:"🌊", cat:"now" },
+  { id:"panic",     label:"パニック・過呼吸になりそう",     icon:"🫁", cat:"now" },
+  { id:"flashback", label:"いやな記憶がよみがえる",         icon:"🎞", cat:"now" },
+  { id:"compare",   label:"人と比べてつらい",               icon:"😔", cat:"feel" },
+  { id:"guilt",     label:"自分を責める・申し訳ない",       icon:"😣", cat:"feel" },
+  { id:"drained",   label:"人づきあいで疲れた",             icon:"😫", cat:"feel" },
+  { id:"money",     label:"お金が不安",                     icon:"💸", cat:"feel" },
+  { id:"stuck",     label:"決められない・先延ばし",         icon:"🌀", cat:"feel" },
+  { id:"lonely",    label:"さびしい・ひとりぼっち",         icon:"🌙", cat:"feel" },
+  { id:"empty",     label:"無気力・何もしたくない",         icon:"😑", cat:"feel" },
+  { id:"sensory",   label:"音や光がしんどい",               icon:"🎧", cat:"feel" },
+  { id:"rumination",label:"考えがぐるぐる止まらない",       icon:"🌪", cat:"think" },
+  { id:"selfattack",label:"自分をいじめる考えが出る",       icon:"🧠", cat:"think" },
+  { id:"worry",     label:"心配ごとが止まらない",           icon:"⏰", cat:"think" },
+  { id:"cantchange",label:"変えられないことに疲れた",       icon:"🪶", cat:"think" },
+  { id:"morning",   label:"朝、動き出せない",               icon:"🌅", cat:"base" },
+  { id:"sleep",     label:"夜、眠れない",                   icon:"🛏", cat:"base" },
+  { id:"holiday",   label:"休みの日に何もできない",         icon:"🛋", cat:"base" },
+  { id:"info",      label:"スマホ・SNSで疲れた",            icon:"📱", cat:"base" },
+  { id:"mistake",   label:"仕事でやらかした・怒られた",     icon:"💦", cat:"feel" },
+  { id:"tsukiai",   label:"飲み会・付き合いで疲れた",       icon:"🍻", cat:"feel" },
+  { id:"commute",   label:"通勤・満員電車がしんどい",       icon:"🚃", cat:"feel" },
+  { id:"urge",      label:"やけ食い・衝動買いしそう",       icon:"🍫", cat:"now" },
+  { id:"monday",    label:"月曜・週明けがつらい",           icon:"📅", cat:"base" },
+  { id:"nightphone",label:"夜、スマホがやめられない",       icon:"📵", cat:"base" },
+  { id:"mess",      label:"部屋・家事がたまってやばい",     icon:"🧺", cat:"base" },
+  { id:"reward",    label:"がんばった！ごほうびがほしい",   icon:"🍮", cat:"joy" },
+  { id:"play",      label:"休日をたのしみたい",             icon:"🎈", cat:"joy" },
+  { id:"keep",      label:"ふつうの日・調子をキープしたい", icon:"🌤", cat:"fit" },
+];
+
+// ライブラリ項目（エビデンスある枠組みから厳選。断定表現は避ける）
+const CARE_ITEMS = [
+  // ── いますぐ・体から（DBT苦悩耐性 / 呼吸 / 筋弛緩 / グラウンディング）──
+  { id:"n01", text:"保冷剤や冷たいペットボトルを、ほお・首・目の下にあてる", cat:"now", scene:"any",  sit:["surge","panic"], states:[-5,-2], note:"心臓の持病・血圧の薬がある人は、軽く冷やす程度に" },
+  { id:"n02", text:"氷を1つ、ぎゅっと握る（冷たさに意識を向ける）",           cat:"now", scene:"home", sit:["surge"], states:[-5,-3] },
+  { id:"n03", text:"冷たい水で顔を洗う／手首を冷たい水にあてる",             cat:"now", scene:"any",  sit:["surge","panic","flashback"], states:[-5,-2] },
+  { id:"n04", text:"鼻で二段吸って、口から長〜く吐く（×3回）",               cat:"now", scene:"any",  sit:["surge","panic","rumination"], states:[-5,-1], detail:"吸いきる前にもう一口吸い足して、ゆっくり吐ききる。息を止めるのが苦しい人は「吐く方を長く」だけでOK" },
+  { id:"n05", text:"両手を10秒ギュッと握って、パッと脱力（数回）",           cat:"now", scene:"any",  sit:["surge","sensory"], states:[-5,-1], detail:"呼吸が苦手な人はこちら。緊張→ゆるめるで体が力の抜き方を思い出す" },
+  { id:"n06", text:"肩を耳まで上げて、ストンと落とす（3回）",                cat:"now", scene:"work", sit:["surge","drained"], states:[-4,0] },
+  { id:"n07", text:"見えるもの5つ・触れるもの4つ・聞こえる音3つ…と数える",   cat:"now", scene:"any",  sit:["panic","flashback","rumination"], states:[-5,-1], detail:"5-4-3-2-1法。におい2つ・味1つまで数えて「今ここ」に戻る" },
+  { id:"n08", text:"足の裏が床についている感覚に、意識を戻す",               cat:"now", scene:"any",  sit:["panic","flashback"], states:[-5,-1] },
+  { id:"n09", text:"「この波は、必ず過ぎる」と心の中で言う",                 cat:"now", scene:"any",  sit:["surge"], states:[-5,-2] },
+  { id:"n10", text:"とっさに返事せず、ピークが過ぎるまで少し待つ",           cat:"now", scene:"work", sit:["surge"], states:[-4,0] },
+  { id:"n11", text:"その場をいったん離れる（トイレ・別室・外の空気）",       cat:"now", scene:"work", sit:["surge","sensory","drained"], states:[-5,-1] },
+  { id:"n12", text:"「これはパニックで、命に別状はない。数分で過ぎる」と思い出す", cat:"now", scene:"any", sit:["panic"], states:[-5,-2], note:"はじめての強い動悸・胸の痛みは、まず受診を" },
+  { id:"n13", text:"4秒吸って、8秒かけて吐く（吐く方を長く）",               cat:"now", scene:"any",  sit:["panic","sleep"], states:[-5,0], note:"呼吸に集中すると苦しい人は、数える系に切り替えてOK" },
+  { id:"n14", text:"今いる場所と今日の日付を、指を折って確認する",           cat:"now", scene:"any",  sit:["flashback"], states:[-5,-1] },
+  { id:"n15", text:"好きなにおい（ハンドクリーム等）をかいで今に戻る",       cat:"now", scene:"any",  sit:["flashback","panic"], states:[-5,-1] },
+  { id:"n16", text:"高ぶった時こそ、ゆっくり吐く呼吸で1段さげる",            cat:"now", scene:"any",  sit:["surge"], states:[3,5] },
+
+  // ── 気持ち：人と比べる・恥（セルフ・コンパッション）──
+  { id:"f01", text:"「あ、今また比べてたな」と心の中で名前をつける",         cat:"feel", scene:"work", sit:["compare"], states:[-4,0] },
+  { id:"f02", text:"「相手の表舞台と、自分の楽屋を比べてた」と思い出す",     cat:"feel", scene:"any",  sit:["compare"], states:[-4,0], detail:"人に見えるのは相手の見せたい一場面だけ。あなたの裏側と比べるのはいつも不公平" },
+  { id:"f03", text:"SNSをそっと閉じて、スマホを別の部屋に置く",              cat:"feel", scene:"home", sit:["compare","info"], states:[-4,0] },
+  { id:"f04", text:"今日できた小さいことを3つ書き出す",                      cat:"feel", scene:"home", sit:["compare","guilt","empty"], states:[-3,0], detail:"「布団から出た」もカウント。0個の日があってもいい" },
+  { id:"f05", text:"しんどくなる相手を、そっとミュート・フォロー解除する",   cat:"feel", scene:"home", sit:["compare","info"], states:[-3,1] },
+  { id:"f06", text:"片方の手で、もう片方の手をそっと握る",                   cat:"feel", scene:"work", sit:["compare","guilt","lonely"], states:[-5,-1] },
+  // ── 気持ち：自責・罪悪感 ──
+  { id:"f07", text:"「事実」と「想像」を分ける（事実＝◯◯した／想像＝嫌われたかも）", cat:"feel", scene:"work", sit:["guilt","rumination"], states:[-4,0] },
+  { id:"f08", text:"同じ状況の親友に何と声をかけるか考えて、その言葉を自分にかける", cat:"feel", scene:"any", sit:["guilt","compare","selfattack"], states:[-5,-1], detail:"責めずに、優しく。声に出して読むとさらに効きやすい" },
+  { id:"f09", text:"今日の「すみません」を1回だけ、「ありがとう」に言い換えてみる",   cat:"feel", scene:"any", sit:["guilt"], states:[-4,0] },
+  { id:"f10", text:"できたことノートに「起きた」「ごはんを食べた」と小さく書く",     cat:"feel", scene:"home", sit:["guilt","empty"], states:[-4,0] },
+  { id:"f11", text:"湯船や毛布で、自分の体を温めていたわる",                 cat:"feel", scene:"home", sit:["guilt","lonely"], states:[-5,-1] },
+  // ── 気持ち：対人消耗 ──
+  { id:"f12", text:"耳栓やイヤホンで音を減らす／席を静かな側に移す",         cat:"feel", scene:"work", sit:["drained","sensory"], states:[-4,0], note:"「使わせてください」と頼んでいい" },
+  { id:"f13", text:"トイレで1分だけ、ひとりになる",                          cat:"feel", scene:"work", sit:["drained"], states:[-4,0] },
+  { id:"f14", text:"頭の中で「退勤ボタン」を押して、今日の人づきあいを閉じる", cat:"feel", scene:"home", sit:["drained"], states:[-4,0] },
+  { id:"f15", text:"予定を1つ減らして、1つは残す。あいた時間はひとりの時間に", cat:"feel", scene:"home", sit:["drained","sensory"], states:[-4,0] },
+  // ── 気持ち：お金の不安 ──
+  { id:"f16", text:"次の収入日までの日数だけ数えて、考え込みを止める",       cat:"feel", scene:"any",  sit:["money"], states:[-4,0] },
+  { id:"f17", text:"今日使ったお金を1行だけメモ（反省文にしない・記録だけ）", cat:"feel", scene:"home", sit:["money"], states:[-3,1] },
+  { id:"f18", text:"お金の不安を紙に全部出して、相談できる人を1人書く",      cat:"feel", scene:"home", sit:["money","worry"], states:[-4,0] },
+  // ── 気持ち：先延ばし・決められない ──
+  { id:"f19", text:"「今やる／後でやる／やらない」の3つに仕分けるだけ",      cat:"feel", scene:"work", sit:["stuck"], states:[-3,1] },
+  { id:"f20", text:"タイマー5分だけ「とりあえず触る」。鳴ったらやめてよい",  cat:"feel", scene:"any",  sit:["stuck","empty"], states:[-3,1] },
+  { id:"f21", text:"やることを1段階に細かく割る（掃除→机1マスだけ）",        cat:"feel", scene:"home", sit:["stuck"], states:[-3,1] },
+  // ── 気持ち：孤独 ──
+  { id:"f22", text:"話しやすい人に、今日ひとことだけ話しかけてみる",         cat:"feel", scene:"work", sit:["lonely"], states:[-4,0] },
+  { id:"f23", text:"友だちや家族に、スタンプ1つでも送ってみる",              cat:"feel", scene:"home", sit:["lonely"], states:[-4,0] },
+  { id:"f24", text:"ラジオや配信をつけて、人の声を部屋に置く",               cat:"feel", scene:"home", sit:["lonely"], states:[-4,0] },
+  { id:"f25", text:"ペットや植物の世話をする",                               cat:"feel", scene:"home", sit:["lonely","empty"], states:[-3,1] },
+  { id:"f26", text:"動物の動画や画像を見て、ほっとする時間をつくる",         cat:"feel", scene:"any",  sit:["lonely","drained"], states:[-4,0] },
+  // ── 気持ち：無気力 ──
+  { id:"f27", text:"5分でできることを1つだけ選んでやる（選ぶだけでもOK）",   cat:"feel", scene:"work", sit:["empty","stuck"], states:[-3,0] },
+  { id:"f28", text:"窓を開ける・顔を洗う、体をまず1つ動かす",                cat:"feel", scene:"home", sit:["empty","morning"], states:[-4,0], detail:"やる気は「出てから動く」のではなく「動くと後からついてくる」" },
+  { id:"f29", text:"「何もしない時間」を予定として自分に許可する",           cat:"feel", scene:"home", sit:["empty","holiday"], states:[-4,1] },
+  // ── 気持ち：感覚過敏 ──
+  { id:"f30", text:"照明を1段階落とす／無音で15分こもる",                    cat:"feel", scene:"home", sit:["sensory"], states:[-4,0] },
+  { id:"f31", text:"肌ざわりのよい毛布など、心地よい刺激で上書きする",       cat:"feel", scene:"home", sit:["sensory"], states:[-4,0] },
+  { id:"f32", text:"泣ける映画や音楽で、涙と一緒に気持ちを流す",             cat:"feel", scene:"home", sit:["surge","guilt"], states:[-4,-1], note:"余計に沈むようなら、途中でやめてOK" },
+  { id:"f33", text:"自分をハグする・腕をゆっくりなでる",                     cat:"feel", scene:"home", sit:["lonely","guilt"], states:[-5,-1] },
+
+  // ── 考えと付き合う（距離化 / 受容 / 価値 / 心配タイム / 問題解決）──
+  { id:"t01", text:"「私はダメだ」→「私は今、ダメだと感じている」と言い換える", cat:"think", scene:"any", sit:["selfattack"], states:[-4,0], detail:"考えは事実ではなく心のクセ。事実と気持ちを分けると少し距離がとれる" },
+  { id:"t02", text:"「いつも」「絶対」「みんな」が出たら、本当にそう？と1回だけ疑う", cat:"think", scene:"any", sit:["selfattack","rumination"], states:[-4,0] },
+  { id:"t03", text:"その考えに自分で決めたあだ名をつけて、外から眺める", cat:"think", scene:"any", sit:["selfattack"], states:[-4,0], detail:"「あ、またアイツが来た」。あだ名はあなたが決めていい" },
+  { id:"t04", text:"「これは今、現実に起きている」と声に出して認める",       cat:"think", scene:"any", sit:["cantchange"], states:[-4,0], detail:"「良し」としなくていい。「今はそうだ」と認めるだけで、抵抗の消耗が減る" },
+  { id:"t05", text:"「こうあるべきじゃない」に「でも今はこうだ」と付け足す", cat:"think", scene:"any", sit:["cantchange"], states:[-4,0] },
+  { id:"t06", text:"大切にしたいことを1つ書き、それに沿う小さな一歩を決める", cat:"think", scene:"home", sit:["cantchange","empty"], states:[-3,1], detail:"つらさを消すより「大事な方向へ動く」ほうが回復に効くことがある" },
+  { id:"t07", text:"心配タイムを決める（例：夕方15分だけ）。日中の心配は一行メモで先送り", cat:"think", scene:"any", sit:["worry","rumination"], states:[-3,1] },
+  { id:"t08", text:"心配を「今できること／できないこと」に仕分ける",         cat:"think", scene:"home", sit:["worry"], states:[-3,1] },
+  { id:"t09", text:"困りごとを「解ける形」に一文で書く→手を3つ出す→一番小さいのを試す", cat:"think", scene:"home", sit:["worry","stuck"], states:[-3,1], detail:"問題解決の4ステップ。ばかげた案もOK、選んで試して合わなければ変える" },
+  { id:"t10", text:"モヤモヤを3つの箱に分ける：変えられる／変えられない／人に頼る", cat:"think", scene:"home", sit:["rumination","worry"], states:[-3,1] },
+  { id:"t11", text:"頭の中を全部ノートに書き出す（ジャーナリング5分）",      cat:"think", scene:"home", sit:["rumination","worry"], states:[-4,1], note:"つらい記憶そのものを掘るのは、支援者と一緒のときに" },
+
+  // ── 土台：生活 ──
+  { id:"b01", text:"布団の中で手足の指をグーパーして、カーテンを開ける",     cat:"base", scene:"home", sit:["morning"], states:[-4,0] },
+  { id:"b02", text:"「起きる」ではなく「上半身だけ起こす」に目標を下げる",   cat:"base", scene:"home", sit:["morning"], states:[-5,-1] },
+  { id:"b03", text:"温かい飲み物を1杯だけ入れる、を最初のゴールにする",      cat:"base", scene:"home", sit:["morning","empty"], states:[-4,0] },
+  { id:"b04", text:"前の夜に、着る服と持ち物を出しておく",                   cat:"base", scene:"home", sit:["morning"], states:[-3,1] },
+  { id:"b05", text:"眠れなくても「横になって休めている」でOKと考える",       cat:"base", scene:"home", sit:["sleep"], states:[-4,1] },
+  { id:"b06", text:"頭の中の考えを、枕元のメモに全部書き出して「預ける」",   cat:"base", scene:"home", sit:["sleep","rumination"], states:[-4,1] },
+  { id:"b07", text:"寝る1時間前からスマホを手放す／別の部屋に置く",          cat:"base", scene:"home", sit:["sleep","info"], states:[-3,2] },
+  { id:"b08", text:"足首・手首を温める",                                     cat:"base", scene:"home", sit:["sleep"], states:[-3,1] },
+  { id:"b09", text:"朝、カーテンを開けて光を目に入れる（体内時計が整う）",   cat:"base", scene:"home", sit:["morning","sleep"], states:[-3,2] },
+  { id:"b10", text:"起きてすぐコップ1杯の水を飲む",                          cat:"base", scene:"home", sit:["morning"], states:[-2,2] },
+  // ── 土台：休日の効力感（行動活性化）──
+  { id:"b11", text:"机の上を1マスだけ片づける",                              cat:"base", scene:"home", sit:["holiday","empty","stuck"], states:[-3,1] },
+  { id:"b12", text:"使った食器を洗う／ゴミを1袋まとめる",                    cat:"base", scene:"home", sit:["holiday"], states:[-3,1] },
+  { id:"b13", text:"洗濯を1回まわす／窓を1つ開けて空気を入れ替える",         cat:"base", scene:"home", sit:["holiday","empty"], states:[-3,1] },
+  { id:"b14", text:"シーツ・枕カバーを替える",                               cat:"base", scene:"home", sit:["holiday","sleep"], states:[-2,2] },
+  { id:"b15", text:"15分だけ外を歩く（日光を浴びる）",                       cat:"base", scene:"any",  sit:["holiday","empty","rumination"], states:[-3,2] },
+  { id:"b16", text:"休日の3点セット：からだに1つ・あたまに1つ・たのしみに1つ", cat:"base", scene:"home", sit:["holiday"], states:[-2,2], detail:"例：散歩＋片づけ＋好きな映画。達成感と心地よさを1つずつ入れると「できた」が残る" },
+  { id:"b17", text:"できたら「できた」と口に出して、自分に小さく○をつける",  cat:"base", scene:"any",  sit:["holiday","empty"], states:[-3,1] },
+  // ── 土台：こころのメンテ ──
+  { id:"b18", text:"今日の「よかったこと」を3つ書く（小さいことで十分）",    cat:"base", scene:"home", sit:["holiday","guilt"], states:[-2,2] },
+  { id:"b19", text:"絵・文章・料理など、手を使う作業に没頭する",             cat:"base", scene:"home", sit:["rumination","empty"], states:[-2,2] },
+  { id:"b20", text:"好きな音楽を1曲、最後まで聴く",                          cat:"base", scene:"any",  sit:["drained","lonely","holiday"], states:[-4,2] },
+  { id:"b21", text:"お風呂・足湯にゆっくりつかる",                           cat:"base", scene:"home", sit:["drained","sleep","holiday"], states:[-4,2] },
+  { id:"b22", text:"温かい飲み物をゆっくり飲む（白湯・ハーブティーなど）",   cat:"base", scene:"any",  sit:["drained","sensory"], states:[-4,1] },
+  // ── 土台：情報疲れ ──
+  { id:"b23", text:"SNS・ニュースを見ない時間をつくる（通知オフ）",          cat:"base", scene:"any",  sit:["info","compare"], states:[-3,2] },
+  { id:"b24", text:"見る時間を「1日◯分」と先に決める（スクリーンタイム）",   cat:"base", scene:"home", sit:["info"], states:[-2,2] },
+  { id:"b25", text:"無音や自然の音（雨・川）で過ごす",                       cat:"base", scene:"home", sit:["info","sensory"], states:[-3,1] },
+  { id:"b26", text:"気持ちを紙に書き出して、少し離れて眺める",               cat:"base", scene:"home", sit:["surge","rumination"], states:[-4,0], detail:"「発散して壊す」より「書いて眺める」ほうが気持ちは落ち着きやすい" },
+  // ── 高ぶり側（+3〜+5）のクールダウン ──
+  { id:"b27", text:"予定を詰めすぎていないか、1つ減らせないか見直す",        cat:"base", scene:"any",  sit:[], states:[3,5] },
+  { id:"b28", text:"ひとりの静かな時間を10分とる",                           cat:"base", scene:"any",  sit:["drained"], states:[2,5] },
+  { id:"b29", text:"ゆっくりご飯を味わう・寝る前のスマホを控える",           cat:"base", scene:"home", sit:["sleep"], states:[2,5] },
+
+  // ── ごほうび・たのしみ（ふつうの日〜良い日の元気キープ）──
+  { id:"j01", text:"がんばった日は、アイスやプリンを買って帰る",             cat:"joy", scene:"any",  sit:["reward"], states:[-2,5] },
+  { id:"j02", text:"好きなカフェで、ちょっといい飲み物を頼む",               cat:"joy", scene:"any",  sit:["reward","play"], states:[-1,5] },
+  { id:"j03", text:"コンビニで新商品のおやつを1つ試す",                      cat:"joy", scene:"any",  sit:["reward","keep"], states:[-2,5] },
+  { id:"j04", text:"おいしいものを、スマホを置いてゆっくり味わう",           cat:"joy", scene:"home", sit:["reward","keep"], states:[-2,5] },
+  { id:"j05", text:"好きな入浴剤で、お風呂をちょっと豪華にする",             cat:"joy", scene:"home", sit:["reward"], states:[-3,5] },
+  { id:"j06", text:"推しの動画・配信・グッズの時間を、堂々ととる",           cat:"joy", scene:"home", sit:["reward","play"], states:[-3,5] },
+  { id:"j07", text:"週末に「ごほうびデー」をひとつ予定しておく",             cat:"joy", scene:"any",  sit:["reward","play"], states:[-1,5] },
+  { id:"j08", text:"ゲーム・漫画・アニメの時間を、時間だけ決めて楽しむ",     cat:"joy", scene:"home", sit:["play","keep"], states:[-2,5] },
+  { id:"j09", text:"好きな音楽をかけながら家事をする",                       cat:"joy", scene:"home", sit:["keep","holiday"], states:[-2,5] },
+  { id:"j10", text:"カメラ片手に、写真を撮りながら散歩する",                 cat:"joy", scene:"any",  sit:["play","holiday"], states:[-1,5] },
+  { id:"j11", text:"料理を1品、ていねいに作ってみる",                        cat:"joy", scene:"home", sit:["play","keep"], states:[-1,5] },
+  { id:"j12", text:"新しい場所・お店を1つ開拓してみる",                      cat:"joy", scene:"any",  sit:["play"], states:[0,5] },
+  { id:"j13", text:"図書館・本屋・公園など、好きな場所に行く",               cat:"joy", scene:"any",  sit:["play","lonely"], states:[-2,5] },
+  { id:"j14", text:"友だちと遊ぶ予定・ごはんの予定を1つ入れる",              cat:"joy", scene:"any",  sit:["play","lonely"], states:[-1,5] },
+  { id:"j15", text:"家族や友だちに、近況をひとこと送ってみる",               cat:"joy", scene:"any",  sit:["keep","lonely"], states:[-2,5] },
+  // ── からだを動かして整える（fit＝健康キープ）──
+  { id:"j16", text:"筋トレを1セットだけ（スクワットか腕立て10回）",          cat:"fit", scene:"home", sit:["keep","reward"], states:[-2,5], detail:"1セットで十分。「毎日続ける」より「やめない」が目標" },
+  { id:"j17", text:"20〜30分のランニング・早歩き",                           cat:"fit", scene:"any",  sit:["keep","play"], states:[-1,3], hype:true },
+  { id:"j18", text:"寝る前にストレッチを5分",                                cat:"fit", scene:"home", sit:["keep","sleep"], states:[-2,5] },
+  { id:"j19", text:"自転車で、ちょっと遠くまで行ってみる",                   cat:"fit", scene:"any",  sit:["play","holiday"], states:[0,3], hype:true },
+  { id:"j20", text:"朝、ラジオ体操をひととおりやる",                         cat:"fit", scene:"home", sit:["keep","morning"], states:[-2,5] },
+  // ── 生活の安定（リズムキープ）──
+  { id:"j21", text:"昨日と同じ時間に起きられたら、それだけで今日は勝ち",     cat:"fit", scene:"home", sit:["keep"], states:[-1,5] },
+  { id:"j22", text:"野菜か果物を、いつもの食事に1品足す",                    cat:"fit", scene:"any",  sit:["keep"], states:[-1,5] },
+  { id:"j23", text:"週に1回の「部屋リセットの日」をつくる",                  cat:"fit", scene:"home", sit:["keep","holiday","mess"], states:[-1,5] },
+  { id:"j24", text:"予定のない日も、朝いちど外の空気を吸う",                 cat:"fit", scene:"home", sit:["keep","holiday","morning"], states:[-2,5] },
+
+  // ── 怒り・イライラ（予告して離れる・点数化・筋出力）──
+  { id:"a01", text:"「10分だけ離れるね」と伝えてから、その場を離れる",       cat:"now",  scene:"any",  sit:["surge"], states:[-5,-1], detail:"黙って消えると関係が壊れやすい。ひとこと予告してから" },
+  { id:"a02", text:"今の怒りに、10点満点で点数をつけてみる",                 cat:"feel", scene:"any",  sit:["surge"], states:[-4,0] },
+  { id:"a03", text:"壁や机を両手でゆっくり押して、ゆっくり力を抜く",         cat:"now",  scene:"work", sit:["surge"], states:[-5,-1] },
+  { id:"a04", text:"「私は今、怒っている」と心の中で実況する",               cat:"feel", scene:"any",  sit:["surge"], states:[-4,0] },
+  // ── 伝える・断る（アサーション）──
+  { id:"s01", text:"「私は」で始めて、気持ちをひとつだけ伝えてみる",         cat:"feel", scene:"any",  sit:["drained","tsukiai"], states:[-3,1], detail:"例:「私は急に予定が変わると焦ります」。相手を責めずに自分を主語に" },
+  { id:"s02", text:"断るときは「今日は難しい」＋「ありがとう」のセットで",   cat:"feel", scene:"any",  sit:["tsukiai","drained"], states:[-3,1] },
+  { id:"s03", text:"返事はその場で決めない。「考えて、明日返すね」と言う",   cat:"feel", scene:"any",  sit:["drained","worry","tsukiai"], states:[-3,1] },
+  // ── 衝動の波（依存に流れない）──
+  { id:"u01", text:"飲みたい・食べたい・買いたい波は、10分だけ先に延ばす",   cat:"now",  scene:"any",  sit:["urge"], states:[-5,0], detail:"波は必ず下がる。10分後にまだ欲しければ、そのとき考える" },
+  { id:"u02", text:"ほしい物はカートに入れて、一晩置く",                     cat:"feel", scene:"home", sit:["urge","money"], states:[-3,2] },
+  { id:"u03", text:"食べる前・買う前にひとこと聞く——おなか空いてる？怒ってる？さみしい？疲れてる？", cat:"feel", scene:"any", sit:["urge"], states:[-4,0], detail:"本当にほしいのは食べ物やモノじゃないことが多い" },
+  // ── 通院・薬とのつきあい（提案には出ず、状況からだけ見える）──
+  { id:"m01", text:"薬は、調子がいい日も同じ時間に飲む",                     cat:"base", scene:"home", sit:["keep"], states:[-3,5], noSuggest:true, note:"やめたい・減らしたいときは、主治医と相談してから" },
+  { id:"m02", text:"気になる変化をメモして、次の診察で見せる",               cat:"base", scene:"any",  sit:["keep","worry"], states:[-4,3], noSuggest:true },
+  { id:"m03", text:"次の受診日を、カレンダーに入れておく",                   cat:"base", scene:"home", sit:["keep"], states:[-3,3], noSuggest:true },
+  // ── 調子がいいうちの貯金（リラプス予防・味わい）──
+  { id:"r01", text:"調子がいい今のうちに、自分の「注意サイン」を3つメモする", cat:"fit", scene:"home", sit:["keep"], states:[1,5], detail:"例: 夜ふかしが増える・返信がおっくうになる・音がうるさく感じる" },
+  { id:"r02", text:"しんどい日に見る「危機カード」を作っておく",             cat:"fit",  scene:"home", sit:["keep"], states:[1,4], detail:"連絡先・効いたワザ・お守りの言葉を1枚に。設定の連絡先も埋めておく" },
+  { id:"r03", text:"うれしかった瞬間を、10秒だけ味わい直す",                 cat:"joy",  scene:"any",  sit:["keep","reward"], states:[0,5] },
+  { id:"r04", text:"今日のちょっと良かったことを、誰かにひとつ送ってみる",   cat:"joy",  scene:"any",  sit:["keep","lonely"], states:[0,5] },
+  // ── 気持ちに名前をつける ──
+  { id:"e01", text:"今の気持ちに、名前をひとつつけてみる",                   cat:"feel", scene:"any",  sit:["surge","rumination","selfattack"], states:[-5,0], detail:"不安？くやしい？さみしい？——近い言葉でOK。名前がつくと少し扱いやすくなる" },
+  // ── 調子が上がりすぎたときのブレーキ（+3〜+5）──
+  { id:"g01", text:"眠くなくても、いつもの時間にふとんに入る",               cat:"fit",  scene:"home", sit:["keep","sleep"], states:[3,5] },
+  { id:"g02", text:"大きな買い物・大きな決断は、48時間おいてから",           cat:"fit",  scene:"any",  sit:["keep","urge"], states:[3,5] },
+  { id:"g03", text:"「最近、寝なくても平気になってない？」と自分に聞いてみる", cat:"fit", scene:"any",  sit:["keep"], states:[4,5], detail:"当てはまったら、予定と刺激を減らして早めに休む。眠気のない元気は借金のことがある" },
+  // ── 生理前のしんどさ ──
+  { id:"p01", text:"生理前の落ち込みやイライラは、日付といっしょにメモしておく", cat:"feel", scene:"any", sit:["keep","rumination"], states:[-4,1], detail:"波のパターンが見えると「またこの時期か」と構えられる" },
+  // ── 頼る ──
+  { id:"h01", text:"「ちょっと聞いてほしいことがある」と、ひとことだけ伝えてみる", cat:"feel", scene:"any", sit:["lonely","guilt","worry"], states:[-5,-1], detail:"全部話さなくていい。ひとことから始まる" },
+
+  // ── 仕事でやらかした・怒られた ──
+  { id:"w01", text:"反省会は、明日の朝の自分にまかせる。今夜は開かない",     cat:"feel", scene:"home", sit:["mistake","guilt"], states:[-4,0] },
+  { id:"w02", text:"ミスした日は、帰りに温かいものをひとつ。今日の分の手当て", cat:"joy", scene:"any",  sit:["mistake"], states:[-4,0] },
+  { id:"w03", text:"怒られた直後は、席にもどる前に長い息を3回",              cat:"now",  scene:"work", sit:["mistake"], states:[-5,-1] },
+  { id:"w04", text:"「言われた内容」と「言い方のキツさ」を分けてみる",       cat:"think", scene:"any", sit:["mistake"], states:[-4,0], detail:"刺さったのは、たぶん言い方のほう" },
+  { id:"w23", text:"きつい電話を切ったら、水をひとくち飲んでから次へ",       cat:"now",  scene:"work", sit:["mistake","drained"], states:[-4,0] },
+  // ── 月曜・週明け ──
+  { id:"w05", text:"月曜は「午前だけ乗り切る」が目標。午後は午後の自分が考える", cat:"base", scene:"any", sit:["monday"], states:[-4,0] },
+  { id:"w06", text:"日曜の夜に、月曜の昼ごはんだけ決めておく",               cat:"base", scene:"home", sit:["monday","sleep"], states:[-3,1] },
+  { id:"w07", text:"連休明けの初日は、6割運転と先に決めておく",              cat:"base", scene:"any",  sit:["monday"], states:[-3,1] },
+  { id:"w08", text:"日曜の夜は、反省も計画もしない。お風呂と好きな動画だけ", cat:"base", scene:"home", sit:["monday","sleep"], states:[-3,1] },
+  // ── 通勤・満員電車 ──
+  { id:"w09", text:"満員電車は「これを聴く時間」に変える",                   cat:"feel", scene:"any",  sit:["commute"], states:[-3,1], detail:"ポッドキャスト1本＝1通勤。電車が「聴く部屋」になる" },
+  { id:"w10", text:"降りる駅までの残り駅数を数える。ちゃんと終わりがある",   cat:"now",  scene:"any",  sit:["commute"], states:[-4,0] },
+  // ── 飲み会・付き合い ──
+  { id:"w11", text:"飲み会は、行く前に「出る時間」を決めておく",             cat:"feel", scene:"any",  sit:["tsukiai"], states:[-3,1], detail:"一次会で帰るのは失礼じゃない" },
+  { id:"w12", text:"気がのらない誘いは「その日はちょっと難しくて」のひとことで", cat:"feel", scene:"any", sit:["tsukiai"], states:[-3,1], detail:"理由は言わなくていい" },
+  // ── 在宅・切り替え ──
+  { id:"w13", text:"仕事を終えたらPCを閉じて、5分だけ外の空気を吸う",        cat:"base", scene:"home", sit:["drained"], states:[-3,1], detail:"「帰宅」のかわりの儀式。家と仕事の区切りをつくる" },
+  { id:"w14", text:"在宅の日も、朝いちど着替える",                           cat:"base", scene:"home", sit:["morning"], states:[-2,2] },
+  // ── 夜スマホ ──
+  { id:"w15", text:"「あと1本見たら充電器に置く」と、先にひとつだけ約束する", cat:"base", scene:"home", sit:["nightphone","sleep"], states:[-3,2] },
+  { id:"w16", text:"スマホの画面をモノクロにしてみる",                       cat:"base", scene:"home", sit:["nightphone","info"], states:[-3,2], detail:"色が消えると、案外あきる" },
+  { id:"w17", text:"夜中に目がさめても、時計を見ない",                       cat:"base", scene:"home", sit:["sleep","nightphone"], states:[-4,1], detail:"目を閉じてるだけで、休めてる" },
+  // ── 部屋・家事 ──
+  { id:"w18", text:"全部やらない。今日は「洗いものだけ」と1種類に決める",    cat:"base", scene:"home", sit:["mess","holiday"], states:[-3,1] },
+  { id:"w19", text:"ゴミ袋1つ持って、15分タイマーでつめられるだけつめる",    cat:"base", scene:"home", sit:["mess"], states:[-2,1] },
+  // ── SNS・人の報告 ──
+  { id:"w20", text:"「おめでとう」のスタンプだけ押して、アプリを閉じる",     cat:"feel", scene:"any",  sit:["compare"], states:[-4,0], detail:"それで義理は果たしてる" },
+  // ── 職場の昼・すきま ──
+  { id:"w21", text:"昼休みに5分だけ外に出る。ビル1周でいい",                 cat:"base", scene:"work", sit:["drained"], states:[-3,2] },
+  { id:"w22", text:"昼ごはんのあと、10分だけ目を閉じる",                     cat:"base", scene:"work", sit:["drained"], states:[-3,2], detail:"午後が別物になる" },
+  // ── お金を使わない楽しみ ──
+  { id:"w24", text:"お金を使わない楽しみをひとつ（図書館・散歩・積んでたゲーム）", cat:"joy", scene:"any", sit:["money","play"], states:[-3,2] },
+  { id:"w25", text:"給料日前は「乗り切り週間」と名前をつけてゲームにする",   cat:"feel", scene:"any",  sit:["money"], states:[-3,1] },
+
+  // ── ごほうび拡充（体メンテ・外出・静か系）──
+  { id:"x01", text:"がんばった週は、サウナか銭湯で全部流す",                 cat:"joy", scene:"any",  sit:["reward","play"], states:[-2,3] },
+  { id:"x02", text:"もみほぐし10分だけ受けてみる。肩は正直",                 cat:"joy", scene:"any",  sit:["reward"], states:[-2,4] },
+  { id:"x03", text:"ヒトカラで大声を出してくる",                             cat:"joy", scene:"any",  sit:["reward","play","surge"], states:[-2,3] },
+  { id:"x04", text:"今日は作らない。出前かお惣菜でちょっと豪華に",           cat:"joy", scene:"home", sit:["reward","mess"], states:[-3,3] },
+  { id:"x05", text:"花を一輪だけ買って帰る",                                 cat:"joy", scene:"any",  sit:["reward","keep"], states:[-2,5] },
+  { id:"x06", text:"ソシャゲのデイリーだけ回して寝る。今日はそれで十分",     cat:"joy", scene:"home", sit:["reward","empty"], states:[-4,1] },
+  { id:"x07", text:"「早く寝る」を、今日いちばんのごほうびにする",           cat:"joy", scene:"home", sit:["reward","keep","sleep"], states:[-3,3] },
+  { id:"x08", text:"本屋をぶらぶらして、1冊だけ買う",                        cat:"joy", scene:"any",  sit:["play"], states:[-1,4] },
+  { id:"x09", text:"終点まで電車に乗ってみる・夜のドライブ",                 cat:"joy", scene:"any",  sit:["play"], states:[0,3], hype:true },
+  { id:"x10", text:"映画館で1本観る（レイトショーもいい）",                  cat:"joy", scene:"any",  sit:["play","reward"], states:[-1,3], hype:true },
+  { id:"x11", text:"15分だけ昼寝する",                                       cat:"fit", scene:"any",  sit:["keep","holiday"], states:[-3,2] },
+  { id:"x12", text:"バッティングセンターや打ちっぱなしで、からだで発散する", cat:"joy", scene:"any",  sit:["play","surge"], states:[-2,3] },
+];
+
+// お守りの言葉（読むだけでいい）
+const OMAMORI = [
+  "落ちるのは、あなたが弱いからではありません。ちゃんと感じられる、優しい心があるからです。",
+  "今日をうまく越えられなくても大丈夫。今日を生きただけで、あなたはもう合格です。",
+  "あなたはこれまで、しんどい日を残らず越えてきました。だから今日も、きっと越えられます。",
+  "人と比べてしまうのは、あなたの楽屋と、誰かの表舞台を比べているだけ。本当のあなたは、もう十分やっています。",
+  "できなかったことより、今日できた小さなことに、目を向けてあげてください。",
+  "しんどいときに休むのは、なまけではなく、明日また立つための準備です。",
+  "完璧じゃなくていい。あなたは、いるだけで、もう価値があります。",
+  "合わなければ、やめて大丈夫。効かなかったのは、あなたのせいではありません。",
+];
+function pickOmamori(dateStr, score){
+  let h = 0; const s = dateStr + String(score);
+  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
+  return OMAMORI[h % OMAMORI.length];
+}
+
+// コラム（よみもの）— 少しずつ増やしていく前提の器
+const COLUMNS = [
+  { id:"col1", icon:"🎭", title:"表舞台と楽屋のはなし", tag:"人と比べる",
+    body:["人と比べて落ち込むのは、心が壊れているからではありません。人の脳は、まわりと自分を比べるようにできています。","ただ、その比較はいつも不公平です。あなたが見ているのは、相手の「表舞台」——見せたい一場面だけ。それをあなたの「楽屋」——疲れも失敗も全部ある裏側と比べているのです。","相手にも楽屋があります。あなたにも表舞台があります。比べていることに気づいたら、「あ、楽屋と舞台を比べてたな」とつぶやいてみてください。それだけで、少しゆるみます。"] },
+  { id:"col2", icon:"🚶", title:"気分は、あとからついてくる", tag:"やる気が出ない",
+    body:["「やる気が出たら動こう」と思っていると、いつまでも動けない日があります。実は順番が逆で、先に小さく動くと、気分があとからついてくることが知られています（行動活性化という考え方です）。","コツは、小さすぎるくらい小さくすること。「掃除する」ではなく「机を1マスだけ片づける」。「散歩する」ではなく「玄関まで行く」。","終わったら「できた」と口に出してください。その小さな○の積み重ねが、気分の底を支えてくれます。"] },
+  { id:"col3", icon:"🤝", title:"親友にかける言葉を、自分にも", tag:"自分を責める",
+    body:["失敗したとき、自分にどんな言葉をかけていますか。「なんでできないんだ」「ダメなやつだ」——もし親友が落ち込んでいたら、絶対にかけない言葉を、自分にはかけていませんか。","セルフ・コンパッションとは、「自分はすごい」と持ち上げることではありません。「つらいよね。これは誰にでもあることだよ」と、親友にするように自分に接することです。","つらいときこそ、一度だけ試してみてください。同じ状況の親友に何と言うかを考えて、その言葉をそのまま、自分に向けて言ってみるのです。"] },
+  { id:"col4", icon:"💭", title:"考えは、事実ではない", tag:"ぐるぐる思考",
+    body:["「私はダメだ」という考えが浮かんだとき、それは「事実」でしょうか。実は、考えは心のクセであって、事実とは限りません。","試しに「私はダメだ」を「私は今、ダメだと感じている」と言い換えてみてください。たった一言の違いですが、考えと自分のあいだに、少しすき間ができます。","「いつも」「絶対」「みんな」という言葉が出てきたら要注意。本当に「いつも」でしょうか？ 1回だけ疑ってみる。それが考えと上手に付き合う第一歩です。"] },
+  { id:"col5", icon:"🌊", title:"強い気持ちは、波のように過ぎる", tag:"衝動・イライラ",
+    body:["怒りや不安が爆発しそうなとき、その強さが永遠に続くように感じます。でも、強い感情には必ずピークがあり、波のように上がって、必ず下がります。","だから、ピークの数十秒〜数分を「やり過ごす」ことができれば、そのあとは少し楽になります。冷たい水で顔を洗う、その場を離れる、長く息を吐く——どれも波をやり過ごすための道具です。","「この波は、必ず過ぎる」。それを知っているだけで、波は少し小さくなります。"] },
+  { id:"col6", icon:"🛌", title:"休むのは、サボりではない", tag:"休み方",
+    body:["「休んでいると罪悪感がある」という声をよく聞きます。でも、考えてみてください。スマホは充電しないと動きません。人も同じです。","休むことは、なまけではなく、明日また立つための準備です。予定のない時間を「何もしない時間」として、自分に許可してあげてください。","それでも罪悪感が出る日は、5分だけ何かを片づけて「できた」を1つ作ってから、堂々と休む。それで十分です。"] },
+  { id:"col7", icon:"🧰", title:"お守りは、数が多いほど心強い", tag:"セルフケアのコツ",
+    body:["セルフケアは「これさえやれば大丈夫」という魔法の1つを探すより、「小さな道具をたくさん持つ」ほうがうまくいくと言われています。","今日効いた方法が、明日も効くとは限りません。逆に、前に効かなかった方法が、今日は効くこともあります。だから、効かなかった方法もリストから消さないでください。","このアプリの「こんな時は？」から、気になったものをどんどん自分の状態表に足していってください。道具箱は、多いほど心強いのです。"] },
+];
+
 function getScoreFace(s) {
   // Simple geometric faces using CSS
-  if(s<=-4) return {mouth:"sad2",eyes:"sad",color:"#E17055"};
-  if(s<=-2) return {mouth:"sad",eyes:"normal",color:"#F39C6B"};
-  if(s<=0) return {mouth:"flat",eyes:"normal",color:"#B2BEC3"};
-  if(s<=2) return {mouth:"smile",eyes:"normal",color:"#55EFC4"};
-  if(s<=4) return {mouth:"happy",eyes:"happy",color:"#00B894"};
-  return {mouth:"grin",eyes:"happy",color:"#00B894"};
+  if(s<=-4) return {mouth:"sad2",eyes:"sad",color:"#D9704F"};
+  if(s<=-2) return {mouth:"sad",eyes:"normal",color:"#E89A6B"};
+  if(s<=0) return {mouth:"flat",eyes:"normal",color:"#B8AE9E"};
+  if(s<=2) return {mouth:"smile",eyes:"normal",color:"#6FBF8B"};
+  if(s<=4) return {mouth:"happy",eyes:"happy",color:"#3E8E5A"};
+  return {mouth:"grin",eyes:"happy",color:"#3E8E5A"};
 }
 
 // Face component
@@ -262,7 +570,7 @@ function generateInsights(entries,prev){
 // ═══════════════════════════════════════
 // Storage
 // ═══════════════════════════════════════
-const KEYS={entries:"metacog_diary_entries",weeklyNotes:"metacog_weekly_notes",settings:"metacog_settings",stateGuide:"metacog_state_guide",version:"metacog_data_version"};
+const KEYS={entries:"metacog_diary_entries",weeklyNotes:"metacog_weekly_notes",settings:"metacog_settings",stateGuide:"metacog_state_guide",careLog:"metacog_care_log",myCare:"metacog_my_care_items",crisis:"metacog_crisis_contacts",version:"metacog_data_version"};
 function sGet(k,fb){try{const r=localStorage.getItem(k);return r===null?fb:JSON.parse(r);}catch{return fb;}}
 function sSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.error(e);}}
 function loadEntries(){return sGet(KEYS.entries,[]);}
@@ -273,8 +581,17 @@ function loadSettings(){return sGet(KEYS.settings,{userName:"",notificationsEnab
 function saveSettings(s){sSet(KEYS.settings,s);}
 function loadStateGuide(){const raw=sGet(KEYS.stateGuide,null);if(!raw)return cloneDefaultGuide();const merged=cloneDefaultGuide();for(const k of STATE_KEYS){if(raw[k])merged[k]={title:raw[k].title??merged[k].title,behavior:raw[k].behavior??merged[k].behavior,selfCare:Array.isArray(raw[k].selfCare)?raw[k].selfCare.filter(s=>typeof s==='string'):merged[k].selfCare};}return merged;}
 function saveStateGuide(g){sSet(KEYS.stateGuide,g);}
-function exportAllData(){return JSON.stringify({version:1,entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),exportedAt:new Date().toISOString()},null,2);}
-function importData(json){try{const d=JSON.parse(json);if(!d.entries||!Array.isArray(d.entries))return{success:false,message:"このデータは使えないよ"};saveEntries(d.entries);if(d.weeklyNotes)saveWeeklyNotes(d.weeklyNotes);if(d.settings)saveSettings(d.settings);if(d.stateGuide)saveStateGuide(d.stateGuide);return{success:true,message:`${d.entries.length}件 読み込んだよ`};}catch{return{success:false,message:"読み込めなかったよ"};}}
+// careLog: {id, date, itemId(ライブラリid or "my:xx" or "guide"), text, effect: null|"good"|"soso"|"bad", score}
+function loadCareLog(){return sGet(KEYS.careLog,[]);}
+function saveCareLog(l){sSet(KEYS.careLog,l);}
+// myCare: 自分で追加したケア {id, text, cat, scene}
+function loadMyCare(){return sGet(KEYS.myCare,[]);}
+function saveMyCare(m){sSet(KEYS.myCare,m);}
+// crisis: 相談先（本体には書かず本人が入れる）
+function loadCrisis(){return sGet(KEYS.crisis,{staff:"",doctor:"",hotline:""});}
+function saveCrisis(c){sSet(KEYS.crisis,c);}
+function exportAllData(){return JSON.stringify({version:2,entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis(),exportedAt:new Date().toISOString()},null,2);}
+function importData(json){try{const d=JSON.parse(json);if(!d.entries||!Array.isArray(d.entries))return{success:false,message:"このデータは使えないよ"};saveEntries(d.entries);if(d.weeklyNotes)saveWeeklyNotes(d.weeklyNotes);if(d.settings)saveSettings(d.settings);if(d.stateGuide)saveStateGuide(d.stateGuide);if(Array.isArray(d.careLog))saveCareLog(d.careLog);if(Array.isArray(d.myCare))saveMyCare(d.myCare);if(d.crisis)saveCrisis(d.crisis);return{success:true,message:`${d.entries.length}件 読み込んだよ`};}catch{return{success:false,message:"読み込めなかったよ"};}}
 function clearAllData(){Object.values(KEYS).forEach(k=>localStorage.removeItem(k));}
 
 // AI分析用テキスト生成
@@ -352,14 +669,82 @@ function diaryReducer(state,action){
     case "UPDATE_SETTINGS":{const s={...state.settings,...action.settings};saveSettings(s);return{...state,settings:s};}
     case "UPDATE_STATE_GUIDE":{const g={...state.stateGuide,[action.key]:{...state.stateGuide[action.key],...action.patch}};saveStateGuide(g);return{...state,stateGuide:g};}
     case "RESET_STATE_GUIDE":{const g=cloneDefaultGuide();saveStateGuide(g);return{...state,stateGuide:g};}
+    case "ADD_CARE_LOG":{const careLog=[...state.careLog,action.log];saveCareLog(careLog);return{...state,careLog};}
+    case "SET_CARE_EFFECT":{const careLog=state.careLog.map(l=>l.id===action.id?{...l,effect:action.effect}:l);saveCareLog(careLog);return{...state,careLog};}
+    case "DELETE_CARE_LOG":{const careLog=state.careLog.filter(l=>l.id!==action.id);saveCareLog(careLog);return{...state,careLog};}
+    case "ADD_MY_CARE":{const myCare=[...state.myCare,action.item];saveMyCare(myCare);return{...state,myCare};}
+    case "DELETE_MY_CARE":{const myCare=state.myCare.filter(m=>m.id!==action.id);saveMyCare(myCare);return{...state,myCare};}
+    case "UPDATE_CRISIS":{const crisis={...state.crisis,...action.crisis};saveCrisis(crisis);return{...state,crisis};}
     case "SET_TAB":return{...state,activeTab:action.tab};
-    case "LOAD":return{...state,entries:action.entries,weeklyNotes:action.weeklyNotes,settings:action.settings,stateGuide:action.stateGuide};
+    case "LOAD":return{...state,entries:action.entries,weeklyNotes:action.weeklyNotes,settings:action.settings,stateGuide:action.stateGuide,careLog:action.careLog,myCare:action.myCare,crisis:action.crisis};
     default:return state;
   }
 }
+
+// ═══════════════════════════════════════
+// 提案エンジン：スコア×実績（効いた記録）でライブラリから選ぶ
+// ═══════════════════════════════════════
+function effectScore(itemId, careLog){
+  // 効いた=+2 / まあまあ=+1 / 合わなかった=-2（直近ほど重く）
+  let s = 0;
+  const logs = careLog.filter(l=>l.itemId===itemId && l.effect);
+  logs.slice(-10).forEach((l,i)=>{
+    const w = 1 + i*0.1;
+    if(l.effect==="good") s += 2*w;
+    else if(l.effect==="soso") s += 1*w;
+    else if(l.effect==="bad") s -= 2*w;
+  });
+  return s;
+}
+function suggestCare(score, careLog, myCare, count=4){
+  let inRange = CARE_ITEMS.filter(it=>score>=it.states[0]&&score<=it.states[1]&&!it.noSuggest);
+  // 深い低調(-4以下)では「考える」系は機能しない——体からのみ
+  if(score<=-4) inRange = inRange.filter(it=>it.cat!=="think");
+  // 上がりすぎ(+4以上)では活動を煽る項目を出さない（睡眠と鎮静を守る）
+  if(score>=4) inRange = inRange.filter(it=>!it.hype);
+  const my = (myCare||[]).map(m=>({...m, id:"my:"+m.id, states:[-5,5], my:true}));
+  const pool = [...inRange, ...my];
+  // スコア帯ごとの優先: 低い時=体から / ふつう=気持ち・学習 / 良い時=キープと貯金
+  const catPriority =
+    score<=-4 ? {now:0,feel:1,base:2,fit:3,joy:4,think:9}
+    : score<=-2 ? {now:0,base:1,feel:2,joy:3,fit:4,think:5}
+    : score<=0  ? {feel:0,base:1,think:2,joy:3,fit:4,now:5}
+    : score<=2  ? {joy:0,base:1,fit:2,feel:3,think:4,now:5}
+    : {fit:0,base:1,joy:2,now:3,feel:4,think:5};
+  // 低調時は選ぶこと自体が負荷——3つまでに絞る
+  const limit = score<=-3 ? Math.min(count,3) : count;
+  const scored = pool.map(it=>({
+    it,
+    // +4以上では「上がりすぎ専用」項目（states下限が+3以上）を最優先に浮かせる
+    key: (it.my?1:0)*5 + effectScore(it.id,careLog)*10 - (catPriority[it.cat]??2)
+      + (score>=4 && it.states && it.states[0]>=3 ? 8 : 0)
+  }));
+  scored.sort((a,b)=>b.key-a.key);
+  // 同カテゴリばかりにならないよう軽く分散
+  const out=[]; const usedCat={};
+  for(const s of scored){
+    if(out.length>=limit) break;
+    const c=s.it.cat||"my";
+    if((usedCat[c]||0)>=2 && scored.length>limit) continue;
+    usedCat[c]=(usedCat[c]||0)+1;
+    out.push(s.it);
+  }
+  return out;
+}
+function isLowStreak(entries, days=2, threshold=-3){
+  // 直近days日の平均がthreshold以下の日が続いているか
+  let streak=0;
+  for(let i=0;i<days;i++){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=toDateString(d);
+    const avg=averageScore(entries.filter(e=>e.date===ds));
+    if(avg!==null && avg<=threshold) streak++;
+  }
+  return streak>=days;
+}
 function DiaryProvider({children}){
-  const[state,dispatch]=useReducer(diaryReducer,{entries:[],weeklyNotes:{},settings:{userName:"",notificationsEnabled:false},stateGuide:cloneDefaultGuide(),activeTab:"home"});
-  useEffect(()=>{dispatch({type:"LOAD",entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide()});},[]);
+  const[state,dispatch]=useReducer(diaryReducer,{entries:[],weeklyNotes:{},settings:{userName:"",notificationsEnabled:false},stateGuide:cloneDefaultGuide(),careLog:[],myCare:[],crisis:{staff:"",doctor:"",hotline:""},activeTab:"home"});
+  useEffect(()=>{dispatch({type:"LOAD",entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis()});},[]);
   return <DiaryCtx.Provider value={{state,dispatch}}>{children}</DiaryCtx.Provider>;
 }
 function useDiaryCtx(){return useContext(DiaryCtx);}
@@ -417,7 +802,7 @@ function TabBar(){
               style={{...S.btn,flex:1,display:"flex",flexDirection:"column",alignItems:"center",padding:"6px 0 6px",
                 background:"transparent",color:active?"var(--accent)":"var(--text-muted)"}}>
               <Icon active={active}/>
-              <span style={{fontSize:9,fontWeight:active?600:400,marginTop:3,letterSpacing:"0.03em"}}>{t.label}</span>
+              <span style={{fontSize:10.5,fontWeight:active?700:500,marginTop:3,letterSpacing:"0.02em"}}>{t.label}</span>
               {active && <div style={{width:4,height:4,borderRadius:2,background:"var(--accent)",marginTop:3}}/>}
             </button>
           );
@@ -486,21 +871,167 @@ function StateCard({score, compact=false}){
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
         <FaceIcon score={score} size={compact?26:32}/>
         <div style={{flex:1,minWidth:0}}>
-          <p style={{fontSize:10,color:"var(--text-muted)",margin:0,fontWeight:600,letterSpacing:"0.05em"}}>いまの状態</p>
-          <p style={{fontSize:compact?13:15,fontWeight:700,color:"var(--text)",margin:"1px 0 0"}}>{g.title}</p>
+          <p style={{fontSize:10.5,color:"var(--text-muted)",margin:0,fontWeight:600,letterSpacing:"0.05em"}}>いまの状態</p>
+          <p style={{fontSize:compact?14:16,fontWeight:700,color:"var(--text)",margin:"1px 0 0"}}>{g.title}</p>
         </div>
         <span style={{fontSize:14,fontWeight:800,color,lineHeight:1,flexShrink:0}}>{score>0?`+${score}`:score}</span>
       </div>
-      <p style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.6,margin:"4px 0 10px"}}>{g.behavior}</p>
+      <p style={{fontSize:12,color:"var(--text-sub)",lineHeight:1.65,margin:"4px 0 10px"}}>{g.behavior}</p>
       <div style={{paddingTop:10,borderTop:`1px dashed rgba(${rgbStr},0.35)`}}>
-        <p style={{fontSize:10,margin:"0 0 6px",fontWeight:700,letterSpacing:"0.05em",color}}>✦ おすすめのセルフケア</p>
+        <p style={{fontSize:10.5,margin:"0 0 6px",fontWeight:700,letterSpacing:"0.05em",color}}>✦ おすすめのセルフケア</p>
         {g.selfCare.map((s,i)=>(
           <div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",marginBottom:4}}>
-            <span style={{fontSize:10,color,marginTop:4,flexShrink:0,lineHeight:1}}>●</span>
-            <span style={{fontSize:12,color:"var(--text)",lineHeight:1.55}}>{s}</span>
+            <span style={{fontSize:10,color,marginTop:5,flexShrink:0,lineHeight:1}}>●</span>
+            <span style={{fontSize:13,color:"var(--text)",lineHeight:1.6}}>{s}</span>
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════
+// 今日の手当て：提案 →「やった」→ 効いた？ のループ
+// ═══════════════════════════════════════
+function CareItemRow({item, careLog, dispatch, score, compact=false}){
+  const cat = CARE_CATEGORIES[item.cat] || {label:"じぶん", color:"var(--accent)", icon:"⭐"};
+  const todayStr = today();
+  const log = careLog.find(l=>l.date===todayStr && l.itemId===item.id);
+  const[justDone,setJustDone]=useState(false);
+  const doIt=()=>{
+    dispatch({type:"ADD_CARE_LOG",log:{id:crypto.randomUUID(),date:todayStr,itemId:item.id,text:item.text,effect:null,score:score??null,createdAt:new Date().toISOString()}});
+    setJustDone(true);
+  };
+  const setEffect=(effect)=>{ if(log) dispatch({type:"SET_CARE_EFFECT",id:log.id,effect}); };
+  return(
+    <div style={{padding:compact?"8px 0":"10px 0",borderBottom:"1px solid var(--border)"}}>
+      <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+        <span style={{fontSize:13,flexShrink:0,marginTop:1}}>{cat.icon}</span>
+        <div style={{flex:1,minWidth:0}}>
+          <p style={{fontSize:13.5,color:"var(--text)",lineHeight:1.6,margin:0}}>{item.text}</p>
+          {item.detail && <p style={{fontSize:11.5,color:"var(--text-muted)",lineHeight:1.55,margin:"3px 0 0"}}>{item.detail}</p>}
+          {item.note && <p style={{fontSize:11,color:"#B07A2E",lineHeight:1.55,margin:"3px 0 0"}}>⚠ {item.note}</p>}
+        </div>
+        {!log ? (
+          <button onClick={doIt} style={{...S.btn,flexShrink:0,fontSize:12,fontWeight:700,padding:"7px 14px",borderRadius:16,background:"rgba(192,95,56,0.1)",color:"var(--accent)",border:"1px solid rgba(192,95,56,0.18)"}}>やった</button>
+        ):(
+          <span className="pop-in" style={{flexShrink:0,fontSize:11,fontWeight:800,color:"var(--positive)",background:"rgba(62,142,90,0.12)",borderRadius:14,padding:"6px 11px"}}>✓ できた</span>
+        )}
+      </div>
+      {log && !log.effect && (
+        <div className="fade-up" style={{display:"flex",gap:6,alignItems:"center",marginTop:8,marginLeft:21}}>
+          <span style={{fontSize:10.5,color:"var(--text-sub)"}}>効いた？</span>
+          {[["good","○ 効いた","var(--positive)"],["soso","△ まあまあ","#B07A2E"],["bad","× 合わない","var(--text-muted)"]].map(([k,l,c])=>(
+            <button key={k} onClick={()=>setEffect(k)} style={{...S.btn,fontSize:10.5,fontWeight:600,padding:"4px 9px",borderRadius:12,background:"var(--card)",border:"1px solid var(--border)",color:c}}>{l}</button>
+          ))}
+        </div>
+      )}
+      {log && log.effect && (
+        <p style={{fontSize:10.5,color:"var(--text-muted)",margin:"6px 0 0 21px"}}>
+          {log.effect==="good"?"○ 効いた — じぶんの武器が1つ増えたね":log.effect==="soso"?"△ まあまあ — それでも試せたのがえらい":"× 合わなかった — あなたのせいじゃないよ。別のを試そう"}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// 危機ストリップ（-4/-5、または低い日が続いた時）
+function CrisisStrip({onOpen, compact=false}){
+  return(
+    <button onClick={onOpen} className="fade-up" style={{...S.btn,width:"100%",textAlign:"left",display:"flex",gap:10,alignItems:"center",
+      padding:compact?"12px 14px":"14px 16px",borderRadius:14,marginTop:10,
+      background:"linear-gradient(135deg, #FDF0EE, #FBE4E0)",border:"1px solid rgba(192,57,43,0.25)"}}>
+      <span style={{fontSize:18,flexShrink:0}}>🆘</span>
+      <div style={{flex:1}}>
+        <p style={{fontSize:12.5,fontWeight:700,color:"#992d20",margin:0}}>すごくつらいときは、まず人につながって</p>
+        <p style={{fontSize:10.5,color:"#b06052",margin:"2px 0 0"}}>タップすると、つながる先と「数分をしのぐ方法」が出るよ</p>
+      </div>
+      <span style={{color:"#992d20",fontSize:14}}>›</span>
+    </button>
+  );
+}
+
+// 危機モーダル：人につながるを最優先に。技はつなぎとして最小限
+function CrisisModal({onClose}){
+  const{state,dispatch}=useDiaryCtx();
+  const c=state.crisis;
+  const[edit,setEdit]=useState(false);
+  const rows=[
+    {key:"staff", label:"事業所の担当・支援者", ph:"例：◯◯さん 090-xxxx（平日9-17時）"},
+    {key:"doctor", label:"主治医・相談支援", ph:"例：◯◯クリニック 04x-xxx-xxxx"},
+    {key:"hotline", label:"相談窓口", ph:"例：こころの健康相談 0570-064-556"},
+  ];
+  const hasAny=rows.some(r=>c[r.key]);
+  return(
+    <Modal onClose={onClose}>
+      <div style={{textAlign:"center",marginBottom:14}}>
+        <span style={{fontSize:28}}>🆘</span>
+        <h2 style={{fontSize:17,fontWeight:800,margin:"6px 0 0",color:"#992d20"}}>すごくつらいとき</h2>
+      </div>
+      <div style={{background:"#FDF0EE",borderRadius:12,padding:"12px 14px",marginBottom:14}}>
+        <p style={{fontSize:12.5,lineHeight:1.7,color:"var(--text)",margin:0}}>
+          「消えたい」「自分を傷つけたい」気持ちが強いときは、セルフケアより先に、<b style={{color:"#992d20"}}>まず人につながる</b>ことを最優先にしてください。
+          その気持ちは、あなたが弱いからではなく、<b>つらさが限界に来ているという合図</b>です。ひとりで抱えなくて大丈夫。
+        </p>
+      </div>
+
+      <p style={{fontSize:11,fontWeight:700,color:"var(--text-sub)",margin:"0 0 6px"}}>📞 つながる先</p>
+      {rows.map(r=>(
+        <div key={r.key} style={{marginBottom:8}}>
+          {edit ? (
+            <>
+              <label style={{fontSize:10.5,fontWeight:600,color:"var(--text-muted)"}}>{r.label}</label>
+              <input type="text" value={c[r.key]} placeholder={r.ph} onChange={e=>dispatch({type:"UPDATE_CRISIS",crisis:{[r.key]:e.target.value}})} style={{...S.input,fontSize:12.5,marginTop:3}}/>
+            </>
+          ):(
+            <div style={{display:"flex",gap:8,alignItems:"center",background:"#F8F6F2",borderRadius:10,padding:"10px 12px"}}>
+              <span style={{fontSize:10.5,fontWeight:600,color:"var(--text-muted)",flexShrink:0,width:86}}>{r.label}</span>
+              <span style={{fontSize:12.5,fontWeight:c[r.key]?600:400,color:c[r.key]?"var(--text)":"var(--text-muted)"}}>{c[r.key]||"（未設定）"}</span>
+            </div>
+          )}
+        </div>
+      ))}
+      <button onClick={()=>setEdit(!edit)} style={{...S.btn,fontSize:11,color:"var(--accent)",background:"transparent",padding:"4px 0",marginBottom:10}}>
+        {edit?"✓ 書き終わった":hasAny?"✎ 連絡先を書きなおす":"✎ 支援者と一緒に、連絡先を書いておこう"}
+      </button>
+      <p style={{fontSize:10.5,color:"#992d20",background:"#FBE4E0",borderRadius:8,padding:"8px 10px",lineHeight:1.6,margin:"0 0 14px"}}>
+        命の危険が今すぐあるときは、ためらわずに <b>119（救急）</b>／<b>110（警察）</b> へ。
+      </p>
+
+      <p style={{fontSize:11,fontWeight:700,color:"var(--text-sub)",margin:"0 0 6px"}}>つながるまでの数分を、しのぐ（治すのではなく、もたせる）</p>
+      <div style={{fontSize:12,color:"var(--text)",lineHeight:1.8}}>
+        <p style={{margin:"0 0 4px"}}>・<b>ひとりにならない</b> — 人のいる場所へ移動する・電話をかける</p>
+        <p style={{margin:"0 0 4px"}}>・<b>危ないものを遠ざける</b> — 手の届く所から物理的に離す</p>
+        <p style={{margin:"0 0 4px"}}>・<b>冷たさ</b> — 氷を握る・冷たい水で顔や手首を冷やす</p>
+        <p style={{margin:"0 0 4px"}}>・<b>「この波は、必ず過ぎる」</b> — 強い衝動のピークは長く続かない</p>
+      </div>
+      <button onClick={onClose} style={{...S.btn,width:"100%",marginTop:16,padding:"12px 0",borderRadius:"var(--radius-sm)",background:"#F1F0EE",color:"var(--text-sub)",fontSize:14,fontWeight:500}}>閉じる</button>
+    </Modal>
+  );
+}
+
+// 今日の手当てカード（スコアから提案）
+function CareSuggest({score, compact=false}){
+  const{state,dispatch}=useDiaryCtx();
+  const[showCrisis,setShowCrisis]=useState(false);
+  const[refreshKey,setRefreshKey]=useState(0);
+  const items = useMemo(()=>suggestCare(score, state.careLog, state.myCare, compact?3:4),[score, state.careLog, state.myCare, refreshKey, compact]);
+  const isLow = score<=-4;
+  const omamori = isLow ? pickOmamori(today(), score) : null;
+  return(
+    <div style={{marginTop:12}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:2}}>
+        <p style={{fontSize:10,margin:0,fontWeight:700,letterSpacing:"0.05em",color:"var(--accent)"}}>🩹 今日の手当て — 1つだけでいい</p>
+        <button onClick={()=>setRefreshKey(k=>k+1)} style={{...S.btn,fontSize:10,color:"var(--text-muted)",background:"transparent",padding:"2px 6px"}}>↻ 別のを見る</button>
+      </div>
+      {items.map(it=><CareItemRow key={it.id} item={it} careLog={state.careLog} dispatch={dispatch} score={score} compact={compact}/>)}
+      {omamori && (
+        <div className="fade-up" style={{marginTop:10,padding:"10px 14px",borderLeft:"4px solid #D98BAF",background:"#FCF2F6",borderRadius:"0 10px 10px 0"}}>
+          <p style={{fontSize:12,color:"#8A3E60",lineHeight:1.7,margin:0}}>{omamori}</p>
+        </div>
+      )}
+      {isLow && <CrisisStrip compact={compact} onOpen={()=>setShowCrisis(true)}/>}
+      {showCrisis && <CrisisModal onClose={()=>setShowCrisis(false)}/>}
     </div>
   );
 }
@@ -527,6 +1058,7 @@ function ScoreInputModal({slot,date,onClose,entries,dispatch}){
       </div>
       <ScoreSlider value={score} onChange={setScore}/>
       <StateCard score={score}/>
+      <CareSuggest score={score} compact/>
       <div style={{marginTop:16}}>
         <textarea value={comment} onChange={e=>setComment(e.target.value.slice(0,200))} placeholder="今のきもちをひとこと（書かなくてもOK）" rows={3}
           style={{...S.input,resize:"none"}} onFocus={e=>e.target.style.borderColor="var(--accent-light)"} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
@@ -534,7 +1066,7 @@ function ScoreInputModal({slot,date,onClose,entries,dispatch}){
       </div>
       <div style={{display:"flex",gap:10,marginTop:16}}>
         <button onClick={onClose} style={{...S.btn,flex:1,padding:"12px 0",borderRadius:"var(--radius-sm)",background:"#F1F0EE",color:"var(--text-sub)",fontSize:14,fontWeight:500}}>やめる</button>
-        <button onClick={handleSave} style={{...S.btn,flex:1,padding:"12px 0",borderRadius:"var(--radius-sm)",background:"var(--accent)",color:"white",fontSize:14,fontWeight:600,boxShadow:"0 4px 12px rgba(108,92,231,0.3)"}}>
+        <button onClick={handleSave} style={{...S.btn,flex:1,padding:"12px 0",borderRadius:"var(--radius-sm)",background:"var(--accent)",color:"white",fontSize:14,fontWeight:600,boxShadow:"0 4px 12px rgba(192,95,56,0.3)"}}>
           {existing?"書きなおす":"保存する"}
         </button>
       </div>
@@ -599,14 +1131,16 @@ function MiniGraph({entries}){
 function HomeTab(){
   const{state,dispatch}=useDiaryCtx();
   const[editSlot,setEditSlot]=useState(null);
+  const[showCrisis,setShowCrisis]=useState(false);
   const todayStr=today();
   const todayEntries=state.entries.filter(e=>e.date===todayStr);
   const todayAvg=averageScore(todayEntries);
   const currentSlot=getCurrentTimeSlot();
+  const lowStreak=useMemo(()=>isLowStreak(state.entries),[state.entries]);
   return(
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
       {/* Hero card */}
-      <div style={{...S.card,textAlign:"center",padding:28,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%)",border:"none"}}>
+      <div style={{...S.card,textAlign:"center",padding:28,background:"linear-gradient(135deg, #FDF3E3 0%, #FBE8D3 55%, #F7DFC5 100%)",border:"none"}}>
         <p style={{fontSize:12,fontWeight:600,color:"var(--accent)",letterSpacing:"0.05em",marginBottom:8}}>今日のきもち</p>
         {todayAvg!==null?(
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16}}>
@@ -614,7 +1148,7 @@ function HomeTab(){
             <FaceIcon score={Math.round(todayAvg)} size={52}/>
           </div>
         ):<p style={{fontSize:32,color:"var(--text-muted)",fontWeight:300}}>---</p>}
-        <div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:12,background:"rgba(108,92,231,0.1)",borderRadius:20,padding:"4px 14px"}}>
+        <div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:12,background:"rgba(192,95,56,0.1)",borderRadius:20,padding:"4px 14px"}}>
           <div style={{width:6,height:6,borderRadius:3,background:"var(--accent)"}}/>
           <span style={{fontSize:12,fontWeight:500,color:"var(--accent)"}}>今日は {todayEntries.length}/4 回 書いた</span>
         </div>
@@ -625,11 +1159,22 @@ function HomeTab(){
         {TIME_SLOTS.map(slot=><TimeSlotCard key={slot} slot={slot} entry={todayEntries.find(e=>e.timeSlot===slot)} isCurrent={slot===currentSlot} onClick={()=>setEditSlot(slot)}/>)}
       </div>
 
-      {/* 今日の状態カード（平均スコアから自動で表示） */}
-      {todayAvg!==null && <div style={{marginTop:-4}}><StateCard score={Math.round(todayAvg)}/></div>}
+      {/* 低い日が続いたら、最優先で相談導線 */}
+      {lowStreak && <CrisisStrip onOpen={()=>setShowCrisis(true)}/>}
+
+      {/* 今日の状態カード（平均スコアから自動で表示）＋ 今日の手当て */}
+      {todayAvg!==null && (
+        <div style={{marginTop:-4}}>
+          <StateCard score={Math.round(todayAvg)}/>
+          <div style={{...S.card,marginTop:12,padding:"8px 16px 14px"}}>
+            <CareSuggest score={Math.round(todayAvg)}/>
+          </div>
+        </div>
+      )}
 
       <MiniGraph entries={state.entries}/>
       {editSlot&&<ScoreInputModal slot={editSlot} date={todayStr} onClose={()=>setEditSlot(null)} entries={state.entries} dispatch={dispatch}/>}
+      {showCrisis&&<CrisisModal onClose={()=>setShowCrisis(false)}/>}
     </div>
   );
 }
@@ -678,9 +1223,9 @@ function CalendarTab(){
       </div>
       {/* Legend */}
       <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,fontSize:10,color:"var(--text-muted)"}}>
-        <span style={{width:10,height:10,borderRadius:3,background:"rgba(225,112,85,0.25)",display:"inline-block"}}/>つらい
-        <span style={{width:10,height:10,borderRadius:3,background:"rgba(178,190,195,0.25)",display:"inline-block",marginLeft:6}}/>ふつう
-        <span style={{width:10,height:10,borderRadius:3,background:"rgba(0,184,148,0.25)",display:"inline-block",marginLeft:6}}/>うれしい
+        <span style={{width:10,height:10,borderRadius:3,background:"rgba(217,112,79,0.3)",display:"inline-block"}}/>つらい
+        <span style={{width:10,height:10,borderRadius:3,background:"rgba(184,174,158,0.3)",display:"inline-block",marginLeft:6}}/>ふつう
+        <span style={{width:10,height:10,borderRadius:3,background:"rgba(62,142,90,0.28)",display:"inline-block",marginLeft:6}}/>うれしい
       </div>
 
       {selectedDate&&(
@@ -823,6 +1368,45 @@ function generateRangeInsights(entries, prevEntries, days, rangeLabel) {
   return ins;
 }
 
+// やったセルフケアの実績（期間内）
+function CareLogSummary({rangeDates}){
+  const{state}=useDiaryCtx();
+  const logs=state.careLog.filter(l=>rangeDates.includes(l.date));
+  if(!logs.length) return null;
+  const good=logs.filter(l=>l.effect==="good");
+  // 効いたものランキング
+  const counts={};
+  good.forEach(l=>{counts[l.text]=(counts[l.text]||0)+1;});
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  return(
+    <div style={S.card}>
+      <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:10}}>🩹 やったセルフケア</h3>
+      <div style={{display:"flex",gap:14,marginBottom:top.length?12:0}}>
+        <div style={{textAlign:"center",flex:1}}>
+          <p style={{fontSize:24,fontWeight:800,color:"var(--accent)",margin:0}}>{logs.length}</p>
+          <p style={{fontSize:10,color:"var(--text-muted)",margin:0}}>ためした</p>
+        </div>
+        <div style={{textAlign:"center",flex:1}}>
+          <p style={{fontSize:24,fontWeight:800,color:"var(--positive)",margin:0}}>{good.length}</p>
+          <p style={{fontSize:10,color:"var(--text-muted)",margin:0}}>効いた</p>
+        </div>
+      </div>
+      {top.length>0&&(
+        <div style={{paddingTop:10,borderTop:"1px dashed var(--border)"}}>
+          <p style={{fontSize:10,fontWeight:700,color:"var(--positive)",letterSpacing:"0.05em",margin:"0 0 6px"}}>✦ あなたに効いたもの</p>
+          {top.map(([text,n])=>(
+            <div key={text} style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}>
+              <span style={{fontSize:11,fontWeight:700,color:"var(--positive)",flexShrink:0}}>×{n}</span>
+              <span style={{fontSize:12,color:"var(--text)",lineHeight:1.5}}>{text}</span>
+            </div>
+          ))}
+          <p style={{fontSize:10.5,color:"var(--text-muted)",margin:"8px 0 0"}}>これが、あなたの武器リストになっていくよ</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Report Tab
 function ReportTab(){
   const{state,dispatch}=useDiaryCtx();
@@ -844,7 +1428,7 @@ function ReportTab(){
   const comments=entries.filter(e=>e.comment.trim()).sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
   const chartData=useMemo(()=>buildChartData(rangeDates,entries,rangeKey),[rangeDates,entries,rangeKey]);
   const slotChartData=TIME_SLOTS.map(s=>({name:TIME_SLOT_CONFIG[s].label,avg:bySlot[s].avg??0,hasData:bySlot[s].avg!==null}));
-  const SLOT_COLORS_CHART={morning:"#F8A15A",afternoon:"#74b9ff",evening:"#a29bfe",night:"#6C5CE7"};
+  const SLOT_COLORS_CHART={morning:"#F8A15A",afternoon:"#6FA8CE",evening:"#B08BC9",night:"#6F79B8"};
 
   const totalSlots = Math.round(days*4);
   const rangeStr = rangeDates.length>=2 ? `${new Date(rangeDates[0]).getMonth()+1}/${new Date(rangeDates[0]).getDate()} – ${new Date(rangeDates[rangeDates.length-1]).getMonth()+1}/${new Date(rangeDates[rangeDates.length-1]).getDate()}` : "";
@@ -863,7 +1447,7 @@ function ReportTab(){
             style={{...S.btn,padding:"6px 14px",borderRadius:20,fontSize:12,fontWeight:600,
               background:rangeKey===r.key?"var(--accent)":"var(--card)",
               color:rangeKey===r.key?"white":"var(--text-sub)",
-              boxShadow:rangeKey===r.key?"0 4px 12px rgba(108,92,231,0.3)":"var(--shadow-sm)",
+              boxShadow:rangeKey===r.key?"0 4px 12px rgba(192,95,56,0.3)":"var(--shadow-sm)",
               border:rangeKey===r.key?"none":"1px solid var(--border)"}}>
             {r.label}
           </button>
@@ -882,7 +1466,7 @@ function ReportTab(){
       </div>
 
       {/* Summary */}
-      <div style={{...S.card,textAlign:"center",padding:24,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%)",border:"none"}}>
+      <div style={{...S.card,textAlign:"center",padding:24,background:"linear-gradient(135deg, #FDF3E3 0%, #FBE8D3 55%, #F7DFC5 100%)",border:"none"}}>
         <p style={{fontSize:11,fontWeight:600,color:"var(--accent)",letterSpacing:"0.06em",marginBottom:6}}>{rangeOpt.label}の平均</p>
         {avg!==null?<span style={{fontSize:40,fontWeight:800,color:getScoreColor(avg)}}>{avg>=0?"+":""}{avg.toFixed(1)}</span>
           :<span style={{fontSize:32,color:"var(--text-muted)",fontWeight:300}}>---</span>}
@@ -926,7 +1510,7 @@ function ReportTab(){
       {/* Best/Worst */}
       {(best||worst)&&(
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-          {[{label:"一番良かった時",entry:best,bg:"linear-gradient(135deg,#d5f5e3,#a3e4d7)"},{label:"一番辛かった時",entry:worst,bg:"linear-gradient(135deg,#fadbd8,#f5b7b1)"}].map(({label,entry,bg})=>(
+          {[{label:"一番良かった時",entry:best,bg:"linear-gradient(135deg,#E5F2E0,#CBE5C4)"},{label:"一番辛かった時",entry:worst,bg:"linear-gradient(135deg,#F9E0D8,#F2C4B4)"}].map(({label,entry,bg})=>(
             <div key={label} style={{...S.card,padding:16,background:bg,border:"none"}}>
               <p style={{fontSize:10,fontWeight:600,color:"var(--text-sub)",marginBottom:6}}>{label}</p>
               {entry?(
@@ -970,6 +1554,9 @@ function ReportTab(){
         {comments.length>20&&<p style={{fontSize:11,color:"var(--text-muted)",textAlign:"center"}}>ほかに あと {comments.length-20}件</p>}
       </div>
 
+      {/* やったセルフケア */}
+      <CareLogSummary rangeDates={rangeDates}/>
+
       {/* Reflection */}
       <div style={S.card}>
         <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:8}}>ふりかえり</h3>
@@ -988,6 +1575,7 @@ function SettingsTab(){
   const[importMsg,setImportMsg]=useState(null);
   const[showClear,setShowClear]=useState(false);
   const[aiCopied,setAiCopied]=useState(false);
+  const[showCrisisModal,setShowCrisisModal]=useState(false);
   const handleExport=()=>{const json=exportAllData();const blob=new Blob([json],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`metacog_backup_${today()}.json`;a.click();URL.revokeObjectURL(url);};
   const handleImport=(e)=>{const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=(ev)=>{const r=importData(ev.target.result);setImportMsg(r.message);if(r.success)window.location.reload();};reader.readAsText(file);e.target.value="";};
   const handleAICopy=()=>{const text=formatForAI(state.entries,state.stateGuide);navigator.clipboard.writeText(text).then(()=>{setAiCopied(true);setTimeout(()=>setAiCopied(false),2500);}).catch(()=>{const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);setAiCopied(true);setTimeout(()=>setAiCopied(false),2500);});};
@@ -1009,7 +1597,7 @@ function SettingsTab(){
           </div>
         </div>
       </div>
-      <div style={{...S.card,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%)",border:"none"}}>
+      <div style={{...S.card,background:"linear-gradient(135deg, #FDF3E3 0%, #FBE8D3 55%, #F7DFC5 100%)",border:"none"}}>
         <h3 style={{fontSize:12,fontWeight:600,color:"var(--accent)",marginBottom:6}}>✦ AI分析</h3>
         <p style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.6,margin:"0 0 12px"}}>
           記録と状態表をまとめてコピーして、ChatGPTやClaudeに貼り付けると
@@ -1019,10 +1607,20 @@ function SettingsTab(){
           style={{...btnStyle,marginBottom:0,
             background:aiCopied?"var(--positive)":"var(--accent)",
             color:"white",fontWeight:600,
-            boxShadow:aiCopied?"none":"0 4px 12px rgba(108,92,231,0.3)"}}>
+            boxShadow:aiCopied?"none":"0 4px 12px rgba(192,95,56,0.3)"}}>
           {aiCopied?"✓ コピーした！AIに貼り付けよう":"📋 AI分析用にコピーする"}
         </button>
         {state.entries.length===0&&<p style={{fontSize:10,color:"var(--text-muted)",textAlign:"center",marginTop:6}}>※ まだ記録がないよ。記録してからコピーしてね</p>}
+      </div>
+      {/* 相談先（危機カード） */}
+      <div style={{...S.card,background:"linear-gradient(135deg, #FDF0EE, #FBE9E5)",border:"none"}}>
+        <h3 style={{fontSize:12,fontWeight:700,color:"#992d20",marginBottom:6}}>🆘 すごくつらいときの連絡先</h3>
+        <p style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.6,margin:"0 0 10px"}}>
+          支援者と一緒に書いておくと、つらい日にすぐ見られるよ。書いた内容はこのスマホの中だけに保存されます。
+        </p>
+        <button onClick={()=>setShowCrisisModal(true)} style={{...S.btn,width:"100%",padding:"11px 0",borderRadius:"var(--radius-sm)",background:"white",color:"#992d20",fontSize:13,fontWeight:600,border:"1px solid rgba(192,57,43,0.25)"}}>
+          連絡先を確認・編集する
+        </button>
       </div>
       <div style={S.card}>
         <h3 style={{fontSize:12,fontWeight:600,color:"var(--text-sub)",marginBottom:12}}>データ</h3>
@@ -1043,14 +1641,217 @@ function SettingsTab(){
         )}
       </div>
       <PrivacyBanner/>
-      <p style={{fontSize:10,color:"var(--text-muted)",textAlign:"center",padding:"16px 0",fontWeight:500}}>きもち日記 v0.1.0</p>
+      <p style={{fontSize:10,color:"var(--text-muted)",textAlign:"center",padding:"16px 0",fontWeight:500}}>きもち日記 v0.4.0</p>
+      {showCrisisModal&&<CrisisModal onClose={()=>setShowCrisisModal(false)}/>}
     </div>
   );
 }
 
-// セルフケア（状態表）タブ — 自分用にカスタマイズ可能
+// ═══════════════════════════════════════
+// こんな時は？（状況ナビ）— PDFの感情ナビのアプリ版
+// ═══════════════════════════════════════
+function SituationNav(){
+  const{state,dispatch}=useDiaryCtx();
+  const[selSit,setSelSit]=useState(null);
+  const[sceneFilter,setSceneFilter]=useState("all");
+  const[addText,setAddText]=useState("");
+  const[addedMsg,setAddedMsg]=useState(null);
+
+  const sit = SITUATIONS.find(s=>s.id===selSit);
+  const items = useMemo(()=>{
+    if(!selSit) return [];
+    let r = CARE_ITEMS.filter(it=>it.sit.includes(selSit));
+    if(sceneFilter!=="all") r = r.filter(it=>it.scene===sceneFilter||it.scene==="any");
+    // 効いた実績が高い順
+    return r.sort((a,b)=>effectScore(b.id,state.careLog)-effectScore(a.id,state.careLog));
+  },[selSit,sceneFilter,state.careLog]);
+
+  const quickAdd=()=>{
+    const t=addText.trim();
+    if(!t) return;
+    dispatch({type:"ADD_MY_CARE",item:{id:crypto.randomUUID(),text:t,cat:"my",scene:"any",createdAt:new Date().toISOString()}});
+    setAddText("");
+    setAddedMsg("追加したよ！記録した時の提案にも出てくるよ");
+    setTimeout(()=>setAddedMsg(null),2500);
+  };
+
+  if(!selSit){
+    // 状況グリッド
+    const cats=["now","feel","think","base","fit","joy"];
+    return(
+      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+        <div style={{...S.card,padding:18,background:"linear-gradient(135deg, #FDF3E3 0%, #F9E6CE 100%)",border:"none"}}>
+          <p style={{fontSize:11,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:0}}>こんな時は？</p>
+          <h2 style={{fontSize:17,fontWeight:700,margin:"4px 0 6px"}}>今の状態に近いものをタップ</h2>
+          <p style={{fontSize:12,color:"var(--text-sub)",lineHeight:1.6,margin:0}}>
+            しんどい時ほど、探すのは大変。近いものを1つ選べば、合った手当てが出てくるよ。全部やらなくていい、1つで十分。
+          </p>
+        </div>
+        {cats.map(catKey=>{
+          const cat=CARE_CATEGORIES[catKey];
+          const sits=SITUATIONS.filter(s=>s.cat===catKey);
+          if(!sits.length) return null;
+          return(
+            <div key={catKey}>
+              <p style={{fontSize:11,fontWeight:700,color:cat.color,margin:"0 0 6px",letterSpacing:"0.03em"}}>{cat.icon} {cat.sub}</p>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                {sits.map(s=>(
+                  <button key={s.id} onClick={()=>{setSelSit(s.id);setSceneFilter("all");}}
+                    style={{...S.btn,display:"flex",alignItems:"center",gap:8,padding:"12px 12px",borderRadius:12,textAlign:"left",
+                      background:"var(--card)",border:`1px solid ${cat.color}22`,boxShadow:"var(--shadow-sm)"}}>
+                    <span style={{fontSize:17,flexShrink:0}}>{s.icon}</span>
+                    <span style={{fontSize:13,fontWeight:600,color:"var(--text)",lineHeight:1.45}}>{s.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+        {/* じぶんのケアを追加 */}
+        <div style={S.card}>
+          <p style={{fontSize:12,fontWeight:700,color:"var(--text)",margin:"0 0 4px"}}>⭐ じぶんのセルフケアを追加</p>
+          <p style={{fontSize:11,color:"var(--text-muted)",margin:"0 0 8px"}}>ここにない「わたしに効くこと」を足しておこう</p>
+          <div style={{display:"flex",gap:8}}>
+            <input type="text" value={addText} onChange={e=>setAddText(e.target.value)} placeholder="例：推しの曲を1曲きく"
+              style={{...S.input,fontSize:13}} onKeyDown={e=>{if(e.key==="Enter")quickAdd();}}/>
+            <button onClick={quickAdd} style={{...S.btn,flexShrink:0,padding:"0 16px",borderRadius:"var(--radius-sm)",background:"var(--accent)",color:"white",fontSize:13,fontWeight:600}}>追加</button>
+          </div>
+          {addedMsg&&<p className="fade-up" style={{fontSize:11,color:"var(--positive)",margin:"6px 0 0"}}>✓ {addedMsg}</p>}
+          {state.myCare.length>0&&(
+            <div style={{marginTop:10}}>
+              {state.myCare.map(m=>(
+                <div key={m.id} style={{display:"flex",gap:8,alignItems:"center",padding:"6px 0",borderTop:"1px solid var(--border)"}}>
+                  <span style={{fontSize:12}}>⭐</span>
+                  <span style={{flex:1,fontSize:12.5,color:"var(--text)"}}>{m.text}</span>
+                  <button onClick={()=>dispatch({type:"DELETE_MY_CARE",id:m.id})} style={{...S.btn,fontSize:11,color:"var(--text-muted)",background:"transparent",padding:"2px 6px"}}>削除</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // 状況の詳細（項目リスト）
+  const cat=CARE_CATEGORIES[sit.cat];
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:12}}>
+      <button onClick={()=>setSelSit(null)} style={{...S.btn,alignSelf:"flex-start",fontSize:12,color:"var(--text-sub)",background:"var(--card)",padding:"8px 14px",borderRadius:18,boxShadow:"var(--shadow-sm)",border:"1px solid var(--border)"}}>← もどる</button>
+      <div style={{...S.card,padding:16,background:cat.bg,border:"none"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:22}}>{sit.icon}</span>
+          <div>
+            <h2 style={{fontSize:16,fontWeight:700,margin:0}}>{sit.label}</h2>
+            <p style={{fontSize:11,color:cat.color,fontWeight:600,margin:"2px 0 0"}}>{cat.icon} {cat.sub}</p>
+          </div>
+        </div>
+      </div>
+      {/* 場面フィルタ */}
+      <div style={{display:"flex",gap:6}}>
+        {[["all","すべて"],["work","🏢 職場で"],["home","🏠 家で"]].map(([k,l])=>(
+          <button key={k} onClick={()=>setSceneFilter(k)}
+            style={{...S.btn,padding:"6px 14px",borderRadius:16,fontSize:12,fontWeight:600,
+              background:sceneFilter===k?cat.color:"var(--card)",color:sceneFilter===k?"white":"var(--text-sub)",
+              border:sceneFilter===k?"none":"1px solid var(--border)"}}>{l}</button>
+        ))}
+      </div>
+      <div style={{...S.card,padding:"6px 16px 10px"}}>
+        {items.length===0 && <p style={{fontSize:12,color:"var(--text-muted)",textAlign:"center",padding:"14px 0"}}>この場面の項目はまだないよ。「すべて」も見てみてね</p>}
+        {items.map(it=>(
+          <div key={it.id}>
+            <CareItemRow item={it} careLog={state.careLog} dispatch={dispatch} score={null}/>
+            <AddToGuideRow item={it}/>
+          </div>
+        ))}
+      </div>
+      <p style={{fontSize:10.5,color:"var(--text-muted)",textAlign:"center",lineHeight:1.6}}>合わないと感じたら、やめて大丈夫。<br/>効かなかったのは、あなたのせいではありません。</p>
+    </div>
+  );
+}
+
+// 「じぶんの状態表に入れる」行
+function AddToGuideRow({item}){
+  const{state,dispatch}=useDiaryCtx();
+  const[open,setOpen]=useState(false);
+  const[done,setDone]=useState(false);
+  const addTo=(key)=>{
+    const row=state.stateGuide[key]||DEFAULT_STATE_GUIDE[key];
+    if(!row.selfCare.includes(item.text)){
+      dispatch({type:"UPDATE_STATE_GUIDE",key,patch:{selfCare:[...row.selfCare,item.text]}});
+    }
+    setDone(true); setOpen(false);
+    setTimeout(()=>setDone(false),2000);
+  };
+  if(done) return <p className="fade-up" style={{fontSize:10.5,color:"var(--positive)",margin:"2px 0 8px 21px"}}>✓ じぶんの状態表に入れたよ</p>;
+  return(
+    <div style={{margin:"2px 0 8px 21px"}}>
+      {!open ? (
+        <button onClick={()=>setOpen(true)} style={{...S.btn,fontSize:10.5,color:"var(--accent)",background:"transparent",padding:"2px 0"}}>＋ じぶんの状態表に入れる</button>
+      ):(
+        <div className="fade-up" style={{display:"flex",gap:4,alignItems:"center",flexWrap:"wrap"}}>
+          <span style={{fontSize:10.5,color:"var(--text-sub)"}}>どの状態のとき？</span>
+          {STATE_KEYS.map(k=>{
+            const sc=parseInt(k,10);
+            return <button key={k} onClick={()=>addTo(k)} style={{...S.btn,fontSize:10.5,fontWeight:700,padding:"3px 7px",borderRadius:10,background:"var(--card)",border:"1px solid var(--border)",color:getScoreColor(sc)}}>{sc>0?`+${sc}`:sc}</button>;
+          })}
+          <button onClick={()=>setOpen(false)} style={{...S.btn,fontSize:10.5,color:"var(--text-muted)",background:"transparent",padding:"3px 5px"}}>やめる</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════
+// よみもの（コラム）
+// ═══════════════════════════════════════
+function ColumnsView(){
+  const[selCol,setSelCol]=useState(null);
+  if(selCol){
+    const col=COLUMNS.find(c=>c.id===selCol);
+    return(
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <button onClick={()=>setSelCol(null)} style={{...S.btn,alignSelf:"flex-start",fontSize:12,color:"var(--text-sub)",background:"var(--card)",padding:"8px 14px",borderRadius:18,boxShadow:"var(--shadow-sm)",border:"1px solid var(--border)"}}>← もどる</button>
+        <div style={S.card}>
+          <div style={{textAlign:"center",marginBottom:14}}>
+            <span style={{fontSize:34}}>{col.icon}</span>
+            <h2 style={{fontSize:18,fontWeight:800,margin:"8px 0 4px",lineHeight:1.4}}>{col.title}</h2>
+            <span style={{fontSize:10.5,fontWeight:600,color:"var(--accent)",background:"rgba(192,95,56,0.1)",borderRadius:10,padding:"3px 10px"}}>{col.tag}</span>
+          </div>
+          {col.body.map((p,i)=>(
+            <p key={i} style={{fontSize:13.5,color:"var(--text)",lineHeight:2,margin:"0 0 14px"}}>{p}</p>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  return(
+    <div style={{display:"flex",flexDirection:"column",gap:12}}>
+      <div style={{...S.card,padding:18,background:"linear-gradient(135deg, #FDF3E3 0%, #F9E6CE 100%)",border:"none"}}>
+        <p style={{fontSize:11,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:0}}>よみもの</p>
+        <h2 style={{fontSize:17,fontWeight:700,margin:"4px 0 6px"}}>心のしくみの小さなコラム</h2>
+        <p style={{fontSize:12,color:"var(--text-sub)",lineHeight:1.6,margin:0}}>1本2分で読めるよ。気になったものだけでOK。少しずつ増えていきます。</p>
+      </div>
+      {COLUMNS.map(col=>(
+        <button key={col.id} onClick={()=>setSelCol(col.id)}
+          style={{...S.btn,display:"flex",gap:12,alignItems:"center",textAlign:"left",width:"100%",
+            background:"var(--card)",borderRadius:"var(--radius)",padding:"14px 16px",boxShadow:"var(--shadow-sm)",border:"1px solid var(--border)"}}>
+          <span style={{fontSize:22,flexShrink:0}}>{col.icon}</span>
+          <div style={{flex:1,minWidth:0}}>
+            <p style={{fontSize:13.5,fontWeight:700,color:"var(--text)",margin:0}}>{col.title}</p>
+            <p style={{fontSize:10.5,color:"var(--text-muted)",margin:"2px 0 0"}}>{col.tag}</p>
+          </div>
+          <span style={{fontSize:14,color:"var(--text-muted)"}}>›</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// セルフケア（道具箱）タブ — こんな時は？ / じぶんの状態表 / よみもの
 function SelfCareTab(){
   const{state,dispatch}=useDiaryCtx();
+  const[view,setView]=useState("situations");
   const[expanded,setExpanded]=useState("0");
   const[showReset,setShowReset]=useState(false);
   const guide = state.stateGuide || cloneDefaultGuide();
@@ -1061,15 +1862,30 @@ function SelfCareTab(){
     update(key,{selfCare:lines});
   };
 
+  const segments=[["situations","🧭 こんな時は？"],["guide","📊 じぶんの状態表"],["columns","📖 よみもの"]];
+
   return(
     <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      {/* セグメント切替 */}
+      <div style={{display:"flex",gap:6,background:"var(--card)",borderRadius:14,padding:4,boxShadow:"var(--shadow-sm)",border:"1px solid var(--border)"}}>
+        {segments.map(([k,l])=>(
+          <button key={k} onClick={()=>setView(k)}
+            style={{...S.btn,flex:1,padding:"9px 0",borderRadius:10,fontSize:11.5,fontWeight:600,
+              background:view===k?"var(--accent)":"transparent",color:view===k?"white":"var(--text-sub)"}}>{l}</button>
+        ))}
+      </div>
+
+      {view==="situations" && <SituationNav/>}
+      {view==="columns" && <ColumnsView/>}
+      {view==="guide" && (<>
       {/* 説明カード */}
-      <div style={{...S.card,padding:18,background:"linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",border:"none"}}>
+      <div style={{...S.card,padding:18,background:"linear-gradient(135deg, #FDF3E3 0%, #F9E6CE 100%)",border:"none"}}>
         <p style={{fontSize:11,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:0}}>じぶんの状態表</p>
         <h2 style={{fontSize:17,fontWeight:700,margin:"4px 0 6px"}}>状態とセルフケアを書こう</h2>
         <p style={{fontSize:12,color:"var(--text-sub)",lineHeight:1.6,margin:0}}>
           -5〜+5 のそれぞれに「どんな様子か」「何をすると楽になるか」を書いておくと、
           きもちを記録した時に自分専用のセルフケアが出てくるよ。
+          「🧭 こんな時は？」から気に入ったものを入れることもできるよ。
         </p>
       </div>
 
@@ -1158,6 +1974,7 @@ function SelfCareTab(){
           </div>
         );
       })}
+      </>)}
     </div>
   );
 }
@@ -1170,17 +1987,17 @@ function Onboarding({onDone}){
   const[page,setPage]=useState(0);
   const pages=[
     {
-      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#6C5CE7" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#6C5CE7" fontFamily="sans-serif">♡</text></svg>,
+      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#C05F38" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#C05F38" fontFamily="sans-serif">♡</text></svg>,
       title:"きもち日記へようこそ",
       body:"毎日のきもちを記録して、自分を知るための日記アプリです。\n朝・昼・夕・夜の4つの時間帯にきもちを -5〜+5 で記録できます。"
     },
     {
-      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#00B894" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#00B894" fontFamily="sans-serif">✦</text></svg>,
+      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#3E8E5A" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#3E8E5A" fontFamily="sans-serif">✦</text></svg>,
       title:"セルフケアを見つけよう",
-      body:"スコアを選ぶと、その状態に合ったセルフケアが表示されます。\n「セルフケア」タブから自分専用にカスタマイズもできるよ。"
+      body:"きもちを記録すると、その状態に合った「今日の手当て」が出てきます。\nやってみて「効いた？」を押すと、あなた専用の武器リストが育っていくよ。\nつらい時は「セルフケア」タブの『こんな時は？』から探せます。"
     },
     {
-      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#6C5CE7" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#6C5CE7" fontFamily="sans-serif">🔒</text></svg>,
+      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#C05F38" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#C05F38" fontFamily="sans-serif">🔒</text></svg>,
       title:"あなたのデータは安全です",
       body:"記録はすべて、あなたのスマホの中だけに保存されます。\nサーバーへの送信やアカウント登録は一切ありません。\n安心して使ってください。"
     }
@@ -1226,7 +2043,7 @@ function Onboarding({onDone}){
         }} style={{
           ...S.btn,flex:1,padding:"14px 0",borderRadius:12,
           background:"var(--accent)",color:"white",fontSize:15,fontWeight:600,
-          boxShadow:"0 4px 16px rgba(108,92,231,0.3)"
+          boxShadow:"0 4px 16px rgba(192,95,56,0.3)"
         }}>{isLast?"始めよう！":"つぎへ"}</button>
       </div>
 
@@ -1248,11 +2065,11 @@ function PrivacyBanner(){
   return(
     <div style={{
       ...S.card,padding:16,
-      background:"linear-gradient(135deg, #e8f8f5 0%, #d5f5e3 100%)",
+      background:"linear-gradient(135deg, #EDF5E6 0%, #DDEBD2 100%)",
       border:"none"
     }}>
       <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-        <div style={{width:32,height:32,borderRadius:10,background:"rgba(0,184,148,0.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>🔒</div>
+        <div style={{width:32,height:32,borderRadius:10,background:"rgba(62,142,90,0.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>🔒</div>
         <div>
           <p style={{fontSize:12,fontWeight:700,color:"var(--text)",margin:"0 0 4px"}}>プライバシーについて</p>
           <p style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.6,margin:0}}>
