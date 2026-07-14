@@ -604,11 +604,26 @@ function avatarMood(score){
   if(score>=-3) return "otsukare";
   return "shindoi";
 }
-// 仮アバターSVG（GPT画像が来たら window.KIMOCHI_CHAR_IMAGES["avatar_ふつう" 等]で差し替わる）
+// 分身は3体から選べる（最初のポケモン方式・あとから何度でも変えられる）
+const AVATAR_KINDS=["a","b","c"];
+const AVATAR_BODIES={
+  a:{ // もち型（クリーム）
+    path:"M50 10 C74 10 88 30 88 54 C88 78 72 90 50 90 C28 90 12 78 12 54 C12 30 26 10 50 10 Z",
+    fill:"#F6E3C5", stroke:"#E3C79E" },
+  b:{ // たまご型（わかば）
+    path:"M50 8 C71 8 85 30 85 56 C85 78 70 90 50 90 C30 90 15 78 15 56 C15 30 29 8 50 8 Z",
+    fill:"#E9EED4", stroke:"#C9D3A4" },
+  c:{ // もこもこ型（もも）
+    path:"M50 12 C61 12 69 17 73 25 C84 29 90 39 90 52 C90 76 72 90 50 90 C28 90 10 76 10 52 C10 39 16 29 27 25 C31 17 39 12 50 12 Z",
+    fill:"#F7DFD3", stroke:"#E5BBA9" },
+};
+// 仮アバターSVG（GPT画像が来たら window.KIMOCHI_CHAR_IMAGES["avatar_a_futsuu" 等]で差し替わる）
 // しんどい表情は「毛布にくるまって休んでいる」= 手当て中の絵。苦悶・涙・汗の記号は使わない
-function AvatarFace({mood="futsuu",size=88,style}){
-  const src=(window.KIMOCHI_CHAR_IMAGES||{})["avatar_"+mood];
+function AvatarFace({mood="futsuu",kind="a",size=88,style}){
+  const imgs=window.KIMOCHI_CHAR_IMAGES||{};
+  const src=imgs["avatar_"+kind+"_"+mood]||imgs["avatar_"+mood];
   if(src) return <img src={src} alt="" width={size} height={size} style={{display:"block",objectFit:"contain",width:size,height:size,...style}}/>;
+  const body=AVATAR_BODIES[kind]||AVATAR_BODIES.a;
   const eyes = mood==="ureshii"
     ? <g stroke="#7A5038" strokeWidth="3" strokeLinecap="round" fill="none"><path d="M34 44 q5 -6 10 0"/><path d="M56 44 q5 -6 10 0"/></g>
     : mood==="otsukare"
@@ -625,8 +640,8 @@ function AvatarFace({mood="futsuu",size=88,style}){
     : <path d="M44 58 q6 5 12 0" stroke="#7A5038" strokeWidth="2.8" strokeLinecap="round" fill="none"/>;
   return(
     <svg width={size} height={size} viewBox="0 0 100 100" style={{display:"block",...style}} aria-hidden="true">
-      {/* からだ（まるい分身・性別/年齢を特定しない） */}
-      <path d="M50 10 C74 10 88 30 88 54 C88 78 72 90 50 90 C28 90 12 78 12 54 C12 30 26 10 50 10 Z" fill="#F6E3C5" stroke="#E3C79E" strokeWidth="2.5"/>
+      {/* からだ（性別/年齢を特定しない分身・3種の姿から選択） */}
+      <path d={body.path} fill={body.fill} stroke={body.stroke} strokeWidth="2.5"/>
       {/* ほっぺ */}
       <circle cx="28" cy="55" r="6" fill="#F0B9A0" opacity="0.55"/>
       <circle cx="72" cy="55" r="6" fill="#F0B9A0" opacity="0.55"/>
@@ -740,11 +755,11 @@ function saveStars(s){sSet(KEYS.stars,s);}
 // unlocks: 図鑑で解放したキャラid
 function loadUnlocks(){const u=sGet(KEYS.unlocks,[]);return Array.isArray(u)?u.filter(x=>typeof x==="string"):[];}
 function saveUnlocks(u){sSet(KEYS.unlocks,u);}
-// avatar: 分身（なまえのみ。表示用の器。旧版に戻しても無視されるだけ）
-function loadAvatar(){const a=sGet(KEYS.avatar,null);return a&&typeof a==="object"?{name:typeof a.name==="string"?a.name:""}:{name:""};}
+// avatar: 分身（なまえ＋すがたkind。旧版に戻しても無視されるだけ）
+function loadAvatar(){const a=sGet(KEYS.avatar,null);if(!a||typeof a!=="object")return{name:"",kind:"a"};return{name:typeof a.name==="string"?a.name:"",kind:["a","b","c"].includes(a.kind)?a.kind:"a"};}
 function saveAvatar(a){sSet(KEYS.avatar,a);}
 function exportAllData(){return JSON.stringify({version:4,entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis(),stars:loadStars(),unlocks:loadUnlocks(),avatar:loadAvatar(),exportedAt:new Date().toISOString()},null,2);}
-function importData(json){try{const d=JSON.parse(json);if(!d.entries||!Array.isArray(d.entries))return{success:false,message:"このデータは使えないよ"};saveEntries(d.entries);if(d.weeklyNotes)saveWeeklyNotes(d.weeklyNotes);if(d.settings)saveSettings(d.settings);if(d.stateGuide)saveStateGuide(d.stateGuide);if(Array.isArray(d.careLog))saveCareLog(d.careLog);if(Array.isArray(d.myCare))saveMyCare(d.myCare);if(d.crisis)saveCrisis(d.crisis);if(d.stars&&typeof d.stars.earned==="number")saveStars({earned:d.stars.earned,spent:typeof d.stars.spent==="number"?d.stars.spent:0,log:Array.isArray(d.stars.log)?d.stars.log:[]});if(Array.isArray(d.unlocks))saveUnlocks(d.unlocks.filter(x=>typeof x==="string"));if(d.avatar&&typeof d.avatar==="object"&&typeof d.avatar.name==="string")saveAvatar({name:d.avatar.name});return{success:true,message:`${d.entries.length}件 読み込んだよ`};}catch{return{success:false,message:"読み込めなかったよ"};}}
+function importData(json){try{const d=JSON.parse(json);if(!d.entries||!Array.isArray(d.entries))return{success:false,message:"このデータは使えないよ"};saveEntries(d.entries);if(d.weeklyNotes)saveWeeklyNotes(d.weeklyNotes);if(d.settings)saveSettings(d.settings);if(d.stateGuide)saveStateGuide(d.stateGuide);if(Array.isArray(d.careLog))saveCareLog(d.careLog);if(Array.isArray(d.myCare))saveMyCare(d.myCare);if(d.crisis)saveCrisis(d.crisis);if(d.stars&&typeof d.stars.earned==="number")saveStars({earned:d.stars.earned,spent:typeof d.stars.spent==="number"?d.stars.spent:0,log:Array.isArray(d.stars.log)?d.stars.log:[]});if(Array.isArray(d.unlocks))saveUnlocks(d.unlocks.filter(x=>typeof x==="string"));if(d.avatar&&typeof d.avatar==="object"&&typeof d.avatar.name==="string")saveAvatar({name:d.avatar.name,kind:["a","b","c"].includes(d.avatar.kind)?d.avatar.kind:"a"});return{success:true,message:`${d.entries.length}件 読み込んだよ`};}catch{return{success:false,message:"読み込めなかったよ"};}}
 function clearAllData(){Object.values(KEYS).forEach(k=>localStorage.removeItem(k));}
 
 // AI分析用テキスト生成
@@ -921,7 +936,7 @@ function isLowStreak(entries, days=2, threshold=-3){
   return streak>=days;
 }
 function DiaryProvider({children}){
-  const[state,dispatch]=useReducer(diaryReducer,{entries:[],weeklyNotes:{},settings:{userName:"",notificationsEnabled:false},stateGuide:cloneDefaultGuide(),careLog:[],myCare:[],crisis:{staff:"",doctor:"",hotline:""},stars:{earned:0,spent:0,log:[]},unlocks:[],avatar:{name:""},pendingSit:null,starPulse:0,activeTab:"home"});
+  const[state,dispatch]=useReducer(diaryReducer,{entries:[],weeklyNotes:{},settings:{userName:"",notificationsEnabled:false},stateGuide:cloneDefaultGuide(),careLog:[],myCare:[],crisis:{staff:"",doctor:"",hotline:""},stars:{earned:0,spent:0,log:[]},unlocks:[],avatar:{name:"",kind:"a"},pendingSit:null,starPulse:0,activeTab:"home"});
   useEffect(()=>{dispatch({type:"LOAD",entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis(),stars:loadStars(),unlocks:loadUnlocks(),avatar:loadAvatar()});},[]);
   return <DiaryCtx.Provider value={{state,dispatch}}>{children}</DiaryCtx.Provider>;
 }
@@ -1370,6 +1385,7 @@ function AvatarHero(){
   const[editName,setEditName]=useState(false);
   const[nameDraft,setNameDraft]=useState("");
   const name=(state.avatar&&state.avatar.name)||"じぶん";
+  const kind=(state.avatar&&state.avatar.kind)||"a";
   const isShindoi=mood==="shindoi";
   const tap=()=>{
     setSquish(Date.now());
@@ -1392,17 +1408,29 @@ function AvatarHero(){
         <div style={{position:"relative",flexShrink:0}}>
           <button onClick={tap} aria-label="あなたの分身" style={{...S.btn,background:"transparent",padding:0,display:"block",animation:"avatarBob 3s ease-in-out infinite"}}>
             <div key={squish} style={squish?{animation:"avatarSquish 0.45s ease"}:undefined}>
-              <AvatarFace mood={mood} size={92}/>
+              <AvatarFace mood={mood} kind={kind} size={92}/>
             </div>
           </button>
           {notes.map(n=>(<span key={n.id} style={{position:"absolute",top:-2,right:2,fontSize:15,color:"var(--accent)",animation:"noteFloat 1.25s ease forwards",pointerEvents:"none"}}>{n.ch}</span>))}
         </div>
         <div style={{flex:1,minWidth:0}}>
           {editName?(
-            <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}>
-              <input value={nameDraft} onChange={e=>setNameDraft(e.target.value)} maxLength={10} placeholder="分身になまえをつけられるよ"
-                style={{flex:1,minWidth:0,fontSize:13,padding:"5px 8px",borderRadius:8,border:"1px solid var(--border)",background:"var(--card)"}} autoFocus/>
-              <button onClick={saveName} style={{...S.btn,fontSize:11,fontWeight:700,padding:"5px 10px",borderRadius:8,background:"var(--accent)",color:"white"}}>OK</button>
+            <div style={{marginBottom:4}}>
+              <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:6}}>
+                <input value={nameDraft} onChange={e=>setNameDraft(e.target.value)} maxLength={10} placeholder="分身になまえをつけられるよ"
+                  style={{flex:1,minWidth:0,fontSize:13,padding:"5px 8px",borderRadius:8,border:"1px solid var(--border)",background:"var(--card)"}} autoFocus/>
+                <button onClick={saveName} style={{...S.btn,fontSize:11,fontWeight:700,padding:"5px 10px",borderRadius:8,background:"var(--accent)",color:"white"}}>OK</button>
+              </div>
+              {/* すがたも変えられる（いつでも・何度でも） */}
+              <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                {AVATAR_KINDS.map(k=>(
+                  <button key={k} onClick={()=>dispatch({type:"UPDATE_AVATAR",avatar:{kind:k}})} aria-pressed={kind===k}
+                    style={{...S.btn,padding:3,borderRadius:10,background:kind===k?"rgba(192,95,56,0.10)":"transparent",border:kind===k?"1.5px solid var(--accent-light)":"1px solid var(--border)"}}>
+                    <AvatarFace mood="futsuu" kind={k} size={34}/>
+                  </button>
+                ))}
+                <span style={{fontSize:10,color:"var(--text-muted)"}}>すがたも変えられるよ</span>
+              </div>
             </div>
           ):(
             <p style={{fontSize:13.5,fontWeight:800,margin:"0 0 2px",color:"var(--text)"}}>
@@ -2446,7 +2474,9 @@ function ZukanTab(){
 // ═══════════════════════════════════════
 const ONBOARDING_KEY = "metacog_onboarding_done";
 function Onboarding({onDone}){
+  const{state,dispatch}=useDiaryCtx();
   const[page,setPage]=useState(0);
+  const kind=(state.avatar&&state.avatar.kind)||"a";
   const pages=[
     {
       icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#C05F38" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#C05F38" fontFamily="sans-serif">♡</text></svg>,
@@ -2462,6 +2492,11 @@ function Onboarding({onDone}){
       icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#E8B94F" opacity="0.2"/><text x="32" y="44" textAnchor="middle" fontSize="32" fontFamily="sans-serif">🐾</text></svg>,
       title:"キャラの子たちについて",
       body:"このアプリには、きもちや考え方のパターンにニックネームをつけたキャラが出てきます。\nみんな、あなたのこころの中のうごきに名前をつけた「たとえ」だよ。\nくわしくは「ずかん」タブでどうぞ。"
+    },
+    {
+      picker:true,
+      title:"あなたの分身をえらぼう",
+      body:"この子が、アプリの中のあなたの分身になるよ。\nあとから何度でも変えられるよ。なまえは、ホームでつけられるよ。"
     },
     {
       icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#C05F38" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#C05F38" fontFamily="sans-serif">🔒</text></svg>,
@@ -2480,7 +2515,17 @@ function Onboarding({onDone}){
       padding:24
     }}>
       <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",maxWidth:360,textAlign:"center",gap:20}}>
-        {p.icon}
+        {p.picker?(
+          <div style={{display:"flex",gap:12,justifyContent:"center"}}>
+            {AVATAR_KINDS.map(k=>(
+              <button key={k} onClick={()=>dispatch({type:"UPDATE_AVATAR",avatar:{kind:k}})} aria-pressed={kind===k}
+                style={{...S.btn,padding:10,borderRadius:16,background:kind===k?"rgba(192,95,56,0.10)":"transparent",
+                  border:kind===k?"2px solid var(--accent-light)":"2px solid var(--border)",transition:"all 0.15s"}}>
+                <AvatarFace mood="futsuu" kind={k} size={72}/>
+              </button>
+            ))}
+          </div>
+        ):p.icon}
         <h1 style={{fontSize:22,fontWeight:700,color:"var(--text)",lineHeight:1.4}}>{p.title}</h1>
         <p style={{fontSize:14,color:"var(--text-sub)",lineHeight:1.8,whiteSpace:"pre-line"}}>{p.body}</p>
       </div>
