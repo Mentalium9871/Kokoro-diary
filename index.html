@@ -76,6 +76,10 @@ body {
 @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-4px); } }
 @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 @keyframes popIn { 0% { transform:scale(0.8); opacity:0; } 60% { transform:scale(1.05); } 100% { transform:scale(1); opacity:1; } }
+/* アバター: ゆらゆら呼吸・タップのぷにっと・♪の浮上（GIF不要の生きてる感） */
+@keyframes avatarBob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+@keyframes avatarSquish { 0% { transform:scale(1); } 30% { transform:scale(1.1,0.9); } 60% { transform:scale(0.95,1.05); } 100% { transform:scale(1); } }
+@keyframes noteFloat { 0% { opacity:0; transform:translateY(2px) scale(0.7); } 25% { opacity:1; } 100% { opacity:0; transform:translateY(-30px) scale(1.15); } }
 
 .fade-up { animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1); }
 .scale-in { animation: scaleIn 0.3s cubic-bezier(0.22,1,0.36,1); }
@@ -513,27 +517,27 @@ const COLUMNS = [
 // ═══════════════════════════════════════
 const UNLOCK_COST = 3;
 const VISITORS = [
-  { id:"nemunemu", name:"ネムネム", feeling:"疲労", catchphrase:"もう、でんちぎれ…",
+  { id:"nemunemu", name:"ネムネム", feeling:"疲労", catchphrase:"もう、でんちぎれ…", sit:["drained","empty","morning"],
     description:"がんばったあとに訪ねてくる、おつかれの子。ネムネムが来たら、体が「休みたい」と言っているサイン。",
     aruaru:["がんばった日の夕方、どっと来る","人と長く話したあと","季節の変わり目・気圧がひくい日"],
     hint:"ネムネムは電池残量のお知らせ係。追い返すより、10分だけ目を閉じると帰りじたくを始めるよ。" },
-  { id:"fuan", name:"フアン", feeling:"不安", catchphrase:"だいじょうぶかなあ…",
+  { id:"fuan", name:"フアン", feeling:"不安", catchphrase:"だいじょうぶかなあ…", sit:["worry","panic","money"],
     description:"これから起きるかもしれないことを、先回りして心配してくれる子。来るのは、あなたに守りたいものがあるから。",
     aruaru:["はじめての場所・はじめての人の前","返事やけっかを待っているあいだ","夜、ふとんに入ってから"],
     hint:"フアンには「心配してくれてありがとう。今できることを1つだけやるね」と伝えると、少し静かになるよ。" },
-  { id:"ikarin", name:"イカリン", feeling:"怒り", catchphrase:"それは、ないでしょ！",
+  { id:"ikarin", name:"イカリン", feeling:"怒り", catchphrase:"それは、ないでしょ！", sit:["surge"],
     description:"大切なものを踏まれたときに駆けつける子。イカリンは「なにが大切だったか」を教えてくれている。",
     aruaru:["大切にしていることを軽くあつかわれたとき","つかれがたまっているとき","「わかってもらえない」と感じたとき"],
     hint:"イカリンが来たら、まず10かぞえる。それから「私は何を守りたかった？」と聞くと、本当の用件を教えてくれるよ。" },
-  { id:"nakimushi", name:"ナキムシ", feeling:"悲しみ", catchphrase:"かなしかったね…",
+  { id:"nakimushi", name:"ナキムシ", feeling:"悲しみ", catchphrase:"かなしかったね…", sit:["lonely","guilt"],
     description:"なくしたもの・うまくいかなかったことを、いっしょに悲しんでくれる子。涙は、こころの応急手当。",
     aruaru:["なくしたもの・終わったことを思い出したとき","がんばりが伝わらなかったとき","つかれて、こころの守りがうすくなった夜"],
     hint:"ナキムシは追い返すと長居する子。「悲しいよね」と、となりに座らせてあげると、じつは早く帰っていくよ。" },
-  { id:"kibou", name:"キボウ", feeling:"希望", catchphrase:"できるかも、って思わない？",
+  { id:"kibou", name:"キボウ", feeling:"希望", catchphrase:"できるかも、って思わない？", sit:["reward","play"],
     description:"小さな「できるかも」を運んでくる子。しんどい日にも、ふらっと顔を出すことがある。",
     aruaru:["小さな「できた」が続いたとき","だれかに「いいね」と言ってもらえたとき","よくねむれた朝"],
     hint:"キボウは声の小さい子。記録を見返すと「あ、この日来てたんだ」と、あとから気づけることが多いよ。" },
-  { id:"hokkori", name:"ホッコリ", feeling:"安心", catchphrase:"ここは、だいじょうぶ",
+  { id:"hokkori", name:"ホッコリ", feeling:"安心", catchphrase:"ここは、だいじょうぶ", sit:["keep"],
     description:"ほっとした時間に、そっとそばにいる子。ホッコリに気づけると、こころの充電がすすむ。",
     aruaru:["安心できる人といっしょのとき","あたたかい飲みものを飲んだとき","よていのない午後"],
     hint:"ホッコリは、気づいてもらえると長くいてくれる子。「いま、ほっとしてるな」と心の中でつぶやいてみて。" },
@@ -589,6 +593,55 @@ function CharFace({id,size=44,dim=false,style}){
   const src=(window.KIMOCHI_CHAR_IMAGES||{})[id];
   const st={display:"block",objectFit:"contain",width:size,height:size,filter:dim?"grayscale(0.75) opacity(0.55)":"none",...style};
   return src?<img src={src} alt="" width={size} height={size} style={st}/>:<span style={{...st,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.55,background:"rgba(192,95,56,0.08)",borderRadius:"50%"}}>{(charById(id)||{}).name?charById(id).name[0]:"？"}</span>;
+}
+
+// ═══ アバター（あなたの分身）═══
+// 表情はスコア帯と連動（状態表と同じ軸に乗せる。感情の二重管理をしない）
+function avatarMood(score){
+  if(score===null||score===undefined) return "futsuu";
+  if(score>=2) return "ureshii";
+  if(score>=-1) return "futsuu";
+  if(score>=-3) return "otsukare";
+  return "shindoi";
+}
+// 仮アバターSVG（GPT画像が来たら window.KIMOCHI_CHAR_IMAGES["avatar_ふつう" 等]で差し替わる）
+// しんどい表情は「毛布にくるまって休んでいる」= 手当て中の絵。苦悶・涙・汗の記号は使わない
+function AvatarFace({mood="futsuu",size=88,style}){
+  const src=(window.KIMOCHI_CHAR_IMAGES||{})["avatar_"+mood];
+  if(src) return <img src={src} alt="" width={size} height={size} style={{display:"block",objectFit:"contain",width:size,height:size,...style}}/>;
+  const eyes = mood==="ureshii"
+    ? <g stroke="#7A5038" strokeWidth="3" strokeLinecap="round" fill="none"><path d="M34 44 q5 -6 10 0"/><path d="M56 44 q5 -6 10 0"/></g>
+    : mood==="otsukare"
+    ? <g stroke="#7A5038" strokeWidth="3" strokeLinecap="round"><line x1="34" y1="45" x2="44" y2="45"/><line x1="56" y1="45" x2="66" y2="45"/></g>
+    : mood==="shindoi"
+    ? <g stroke="#7A5038" strokeWidth="3" strokeLinecap="round" fill="none"><path d="M34 46 q5 4 10 0"/><path d="M56 46 q5 4 10 0"/></g>
+    : <g fill="#7A5038"><circle cx="39" cy="45" r="3.4"/><circle cx="61" cy="45" r="3.4"/></g>;
+  const mouth = mood==="ureshii"
+    ? <path d="M43 57 q7 8 14 0" stroke="#7A5038" strokeWidth="3" strokeLinecap="round" fill="none"/>
+    : mood==="otsukare"
+    ? <ellipse cx="50" cy="59" rx="4" ry="5" fill="#7A5038" opacity="0.55"/>
+    : mood==="shindoi"
+    ? <path d="M45 59 q5 3 10 0" stroke="#7A5038" strokeWidth="2.6" strokeLinecap="round" fill="none"/>
+    : <path d="M44 58 q6 5 12 0" stroke="#7A5038" strokeWidth="2.8" strokeLinecap="round" fill="none"/>;
+  return(
+    <svg width={size} height={size} viewBox="0 0 100 100" style={{display:"block",...style}} aria-hidden="true">
+      {/* からだ（まるい分身・性別/年齢を特定しない） */}
+      <path d="M50 10 C74 10 88 30 88 54 C88 78 72 90 50 90 C28 90 12 78 12 54 C12 30 26 10 50 10 Z" fill="#F6E3C5" stroke="#E3C79E" strokeWidth="2.5"/>
+      {/* ほっぺ */}
+      <circle cx="28" cy="55" r="6" fill="#F0B9A0" opacity="0.55"/>
+      <circle cx="72" cy="55" r="6" fill="#F0B9A0" opacity="0.55"/>
+      {eyes}{mouth}
+      {/* しんどい時だけ毛布（休んでいる=手当て中） */}
+      {mood==="shindoi"&&(
+        <g>
+          <path d="M12 66 Q50 52 88 66 L88 78 C82 88 66 90 50 90 C34 90 18 88 12 78 Z" fill="#D98BAF" opacity="0.85"/>
+          <path d="M12 66 Q50 52 88 66" stroke="#C4749B" strokeWidth="2.5" fill="none"/>
+        </g>
+      )}
+      {/* うれしい時のはずみ */}
+      {mood==="ureshii"&&<g fill="#E8B94F"><circle cx="18" cy="24" r="3"/><circle cx="84" cy="20" r="2.4"/></g>}
+    </svg>
+  );
 }
 
 function getScoreFace(s) {
@@ -661,7 +714,7 @@ function generateInsights(entries,prev){
 // ═══════════════════════════════════════
 // Storage
 // ═══════════════════════════════════════
-const KEYS={entries:"metacog_diary_entries",weeklyNotes:"metacog_weekly_notes",settings:"metacog_settings",stateGuide:"metacog_state_guide",careLog:"metacog_care_log",myCare:"metacog_my_care_items",crisis:"metacog_crisis_contacts",stars:"metacog_stars",unlocks:"metacog_unlocks",version:"metacog_data_version"};
+const KEYS={entries:"metacog_diary_entries",weeklyNotes:"metacog_weekly_notes",settings:"metacog_settings",stateGuide:"metacog_state_guide",careLog:"metacog_care_log",myCare:"metacog_my_care_items",crisis:"metacog_crisis_contacts",stars:"metacog_stars",unlocks:"metacog_unlocks",avatar:"metacog_avatar",version:"metacog_data_version"};
 function sGet(k,fb){try{const r=localStorage.getItem(k);return r===null?fb:JSON.parse(r);}catch{return fb;}}
 function sSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.error(e);}}
 function loadEntries(){return sGet(KEYS.entries,[]);}
@@ -687,8 +740,11 @@ function saveStars(s){sSet(KEYS.stars,s);}
 // unlocks: 図鑑で解放したキャラid
 function loadUnlocks(){const u=sGet(KEYS.unlocks,[]);return Array.isArray(u)?u.filter(x=>typeof x==="string"):[];}
 function saveUnlocks(u){sSet(KEYS.unlocks,u);}
-function exportAllData(){return JSON.stringify({version:3,entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis(),stars:loadStars(),unlocks:loadUnlocks(),exportedAt:new Date().toISOString()},null,2);}
-function importData(json){try{const d=JSON.parse(json);if(!d.entries||!Array.isArray(d.entries))return{success:false,message:"このデータは使えないよ"};saveEntries(d.entries);if(d.weeklyNotes)saveWeeklyNotes(d.weeklyNotes);if(d.settings)saveSettings(d.settings);if(d.stateGuide)saveStateGuide(d.stateGuide);if(Array.isArray(d.careLog))saveCareLog(d.careLog);if(Array.isArray(d.myCare))saveMyCare(d.myCare);if(d.crisis)saveCrisis(d.crisis);if(d.stars&&typeof d.stars.earned==="number")saveStars({earned:d.stars.earned,spent:typeof d.stars.spent==="number"?d.stars.spent:0,log:Array.isArray(d.stars.log)?d.stars.log:[]});if(Array.isArray(d.unlocks))saveUnlocks(d.unlocks.filter(x=>typeof x==="string"));return{success:true,message:`${d.entries.length}件 読み込んだよ`};}catch{return{success:false,message:"読み込めなかったよ"};}}
+// avatar: 分身（なまえのみ。表示用の器。旧版に戻しても無視されるだけ）
+function loadAvatar(){const a=sGet(KEYS.avatar,null);return a&&typeof a==="object"?{name:typeof a.name==="string"?a.name:""}:{name:""};}
+function saveAvatar(a){sSet(KEYS.avatar,a);}
+function exportAllData(){return JSON.stringify({version:4,entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis(),stars:loadStars(),unlocks:loadUnlocks(),avatar:loadAvatar(),exportedAt:new Date().toISOString()},null,2);}
+function importData(json){try{const d=JSON.parse(json);if(!d.entries||!Array.isArray(d.entries))return{success:false,message:"このデータは使えないよ"};saveEntries(d.entries);if(d.weeklyNotes)saveWeeklyNotes(d.weeklyNotes);if(d.settings)saveSettings(d.settings);if(d.stateGuide)saveStateGuide(d.stateGuide);if(Array.isArray(d.careLog))saveCareLog(d.careLog);if(Array.isArray(d.myCare))saveMyCare(d.myCare);if(d.crisis)saveCrisis(d.crisis);if(d.stars&&typeof d.stars.earned==="number")saveStars({earned:d.stars.earned,spent:typeof d.stars.spent==="number"?d.stars.spent:0,log:Array.isArray(d.stars.log)?d.stars.log:[]});if(Array.isArray(d.unlocks))saveUnlocks(d.unlocks.filter(x=>typeof x==="string"));if(d.avatar&&typeof d.avatar==="object"&&typeof d.avatar.name==="string")saveAvatar({name:d.avatar.name});return{success:true,message:`${d.entries.length}件 読み込んだよ`};}catch{return{success:false,message:"読み込めなかったよ"};}}
 function clearAllData(){Object.values(KEYS).forEach(k=>localStorage.removeItem(k));}
 
 // AI分析用テキスト生成
@@ -791,8 +847,11 @@ function diaryReducer(state,action){
       const unlocks=[...state.unlocks,action.id];saveUnlocks(unlocks);
       return{...state,stars,unlocks};
     }
+    case "UPDATE_AVATAR":{const avatar={...state.avatar,...action.avatar};saveAvatar(avatar);return{...state,avatar};}
+    case "OPEN_SITUATION":return{...state,activeTab:"selfcare",pendingSit:action.sit};
+    case "CLEAR_PENDING_SIT":return{...state,pendingSit:null};
     case "SET_TAB":return{...state,activeTab:action.tab};
-    case "LOAD":return{...state,entries:action.entries,weeklyNotes:action.weeklyNotes,settings:action.settings,stateGuide:action.stateGuide,careLog:action.careLog,myCare:action.myCare,crisis:action.crisis,stars:action.stars,unlocks:action.unlocks};
+    case "LOAD":return{...state,entries:action.entries,weeklyNotes:action.weeklyNotes,settings:action.settings,stateGuide:action.stateGuide,careLog:action.careLog,myCare:action.myCare,crisis:action.crisis,stars:action.stars,unlocks:action.unlocks,avatar:action.avatar};
     default:return state;
   }
 }
@@ -812,7 +871,9 @@ function effectScore(itemId, careLog){
   });
   return s;
 }
-function suggestCare(score, careLog, myCare, count=4){
+function suggestCare(score, careLog, myCare, count=4, visitorIds=[]){
+  // 訪問者（感情キャラ）が選ばれた日は、その子に対応する状況のケアを優先（感情⇔セルフケアの結節点）
+  const visSits=new Set((visitorIds||[]).flatMap(id=>{const v=charById(id);return(v&&v.sit)?v.sit:[];}));
   let inRange = CARE_ITEMS.filter(it=>score>=it.states[0]&&score<=it.states[1]&&!it.noSuggest);
   // 深い低調(-4以下)では「考える」系は機能しない——体からのみ
   if(score<=-4) inRange = inRange.filter(it=>it.cat!=="think");
@@ -834,6 +895,7 @@ function suggestCare(score, careLog, myCare, count=4){
     // +4以上では「上がりすぎ専用」項目（states下限が+3以上）を最優先に浮かせる
     key: (it.my?1:0)*5 + effectScore(it.id,careLog)*10 - (catPriority[it.cat]??2)
       + (score>=4 && it.states && it.states[0]>=3 ? 8 : 0)
+      + (visSits.size && it.sit && it.sit.some(s=>visSits.has(s)) ? 6 : 0)
   }));
   scored.sort((a,b)=>b.key-a.key);
   // 同カテゴリばかりにならないよう軽く分散
@@ -859,8 +921,8 @@ function isLowStreak(entries, days=2, threshold=-3){
   return streak>=days;
 }
 function DiaryProvider({children}){
-  const[state,dispatch]=useReducer(diaryReducer,{entries:[],weeklyNotes:{},settings:{userName:"",notificationsEnabled:false},stateGuide:cloneDefaultGuide(),careLog:[],myCare:[],crisis:{staff:"",doctor:"",hotline:""},stars:{earned:0,spent:0,log:[]},unlocks:[],starPulse:0,activeTab:"home"});
-  useEffect(()=>{dispatch({type:"LOAD",entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis(),stars:loadStars(),unlocks:loadUnlocks()});},[]);
+  const[state,dispatch]=useReducer(diaryReducer,{entries:[],weeklyNotes:{},settings:{userName:"",notificationsEnabled:false},stateGuide:cloneDefaultGuide(),careLog:[],myCare:[],crisis:{staff:"",doctor:"",hotline:""},stars:{earned:0,spent:0,log:[]},unlocks:[],avatar:{name:""},pendingSit:null,starPulse:0,activeTab:"home"});
+  useEffect(()=>{dispatch({type:"LOAD",entries:loadEntries(),weeklyNotes:loadWeeklyNotes(),settings:loadSettings(),stateGuide:loadStateGuide(),careLog:loadCareLog(),myCare:loadMyCare(),crisis:loadCrisis(),stars:loadStars(),unlocks:loadUnlocks(),avatar:loadAvatar()});},[]);
   return <DiaryCtx.Provider value={{state,dispatch}}>{children}</DiaryCtx.Provider>;
 }
 function useDiaryCtx(){return useContext(DiaryCtx);}
@@ -1136,19 +1198,28 @@ function CrisisModal({onClose}){
 }
 
 // 今日の手当てカード（スコアから提案）
-function CareSuggest({score, compact=false}){
+function CareSuggest({score, compact=false, visitors=[]}){
   const{state,dispatch}=useDiaryCtx();
   const[showCrisis,setShowCrisis]=useState(false);
   const[refreshKey,setRefreshKey]=useState(0);
-  const items = useMemo(()=>suggestCare(score, state.careLog, state.myCare, compact?3:4),[score, state.careLog, state.myCare, refreshKey, compact]);
+  const items = useMemo(()=>suggestCare(score, state.careLog, state.myCare, compact?3:4, visitors),[score, state.careLog, state.myCare, refreshKey, compact, visitors.join(",")]);
   const isLow = score<=-4;
   const omamori = isLow ? pickOmamori(today(), score) : null;
+  const firstVisitor = visitors.length ? charById(visitors[0]) : null;
   return(
     <div style={{marginTop:12}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:2}}>
         <p style={{fontSize:10,margin:0,fontWeight:700,letterSpacing:"0.05em",color:"var(--accent)"}}>🩹 今日の手当て — 1つだけでいい</p>
         <button onClick={()=>setRefreshKey(k=>k+1)} style={{...S.btn,fontSize:10,color:"var(--text-muted)",background:"transparent",padding:"2px 6px"}}>↻ 別のを見る</button>
       </div>
+      {visitors.length>0&&(
+        <div style={{display:"flex",alignItems:"center",gap:6,margin:"4px 0 6px"}}>
+          {visitors.slice(0,3).map(id=><CharFace key={id} id={id} size={22}/>)}
+          <span style={{fontSize:11,color:"var(--text-sub)",lineHeight:1.5}}>
+            {visitors.length===1?`${firstVisitor?firstVisitor.name:""}が来てる日に、ためしやすい手当てだよ`:"きょう来てる子に合わせて、えらんでみたよ"}
+          </span>
+        </div>
+      )}
       {items.map(it=><CareItemRow key={it.id} item={it} careLog={state.careLog} dispatch={dispatch} score={score} compact={compact}/>)}
       {omamori && (
         <div className="fade-up" style={{marginTop:10,padding:"10px 14px",borderLeft:"4px solid #D98BAF",background:"#FCF2F6",borderRadius:"0 10px 10px 0"}}>
@@ -1282,6 +1353,100 @@ function MiniGraph({entries}){
   );
 }
 
+// きょうのじぶん（アバターヒーロー）— 分身が家にいて、きもちが訪ねてくる世界観の中心
+function AvatarHero(){
+  const{state,dispatch}=useDiaryCtx();
+  const todayStr=today();
+  const todayEntries=state.entries.filter(e=>e.date===todayStr);
+  const todayAvg=averageScore(todayEntries);
+  const latest=todayEntries.length?[...todayEntries].sort((a,b)=>String(a.createdAt||"").localeCompare(String(b.createdAt||"")))[todayEntries.length-1]:null;
+  const mood=avatarMood(latest?latest.score:null);
+  const guide=state.stateGuide||cloneDefaultGuide();
+  const row=latest?(guide[String(latest.score)]||DEFAULT_STATE_GUIDE[String(latest.score)]):null;
+  const seen=[];todayEntries.forEach(e=>(e.visitors||[]).forEach(id=>{if(!seen.includes(id))seen.push(id);}));
+  const[squish,setSquish]=useState(0);
+  const[notes,setNotes]=useState([]);
+  const[said,setSaid]=useState(null);
+  const[editName,setEditName]=useState(false);
+  const[nameDraft,setNameDraft]=useState("");
+  const name=(state.avatar&&state.avatar.name)||"じぶん";
+  const isShindoi=mood==="shindoi";
+  const tap=()=>{
+    setSquish(Date.now());
+    const id=Date.now()+Math.random();
+    // しんどい帯では♪を出さない（静かな反応のみ）— SV裁定
+    setNotes(n=>[...n,{id,ch:isShindoi?"…":"♪"}]);
+    setTimeout(()=>setNotes(n=>n.filter(x=>x.id!==id)),1300);
+    // まれに一言（毎タップでは喋らない・しんどい帯は「ゆっくりでいいよ」のみ）
+    if(!said&&Math.random()<0.22){
+      const lines=isShindoi?["ゆっくりでいいよ"]:["きょうも、ここにいるよ","記録してもしなくても、ここにいるよ","ゆっくりでいいよ"];
+      const t=lines[Math.floor(Math.random()*lines.length)];
+      setSaid(t);setTimeout(()=>setSaid(null),3200);
+    }
+  };
+  const saveName=()=>{dispatch({type:"UPDATE_AVATAR",avatar:{name:nameDraft.trim().slice(0,10)}});setEditName(false);};
+  return(
+    <div style={{...S.card,padding:"18px 18px 16px",background:"linear-gradient(135deg, #FDF3E3 0%, #FBE8D3 55%, #F7DFC5 100%)",border:"none"}}>
+      <p style={{fontSize:11,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:"0 0 10px"}}>🏠 きょうのじぶん</p>
+      <div style={{display:"flex",alignItems:"center",gap:16}}>
+        <div style={{position:"relative",flexShrink:0}}>
+          <button onClick={tap} aria-label="あなたの分身" style={{...S.btn,background:"transparent",padding:0,display:"block",animation:"avatarBob 3s ease-in-out infinite"}}>
+            <div key={squish} style={squish?{animation:"avatarSquish 0.45s ease"}:undefined}>
+              <AvatarFace mood={mood} size={92}/>
+            </div>
+          </button>
+          {notes.map(n=>(<span key={n.id} style={{position:"absolute",top:-2,right:2,fontSize:15,color:"var(--accent)",animation:"noteFloat 1.25s ease forwards",pointerEvents:"none"}}>{n.ch}</span>))}
+        </div>
+        <div style={{flex:1,minWidth:0}}>
+          {editName?(
+            <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}>
+              <input value={nameDraft} onChange={e=>setNameDraft(e.target.value)} maxLength={10} placeholder="分身になまえをつけられるよ"
+                style={{flex:1,minWidth:0,fontSize:13,padding:"5px 8px",borderRadius:8,border:"1px solid var(--border)",background:"var(--card)"}} autoFocus/>
+              <button onClick={saveName} style={{...S.btn,fontSize:11,fontWeight:700,padding:"5px 10px",borderRadius:8,background:"var(--accent)",color:"white"}}>OK</button>
+            </div>
+          ):(
+            <p style={{fontSize:13.5,fontWeight:800,margin:"0 0 2px",color:"var(--text)"}}>
+              {name}
+              <button onClick={()=>{setNameDraft((state.avatar&&state.avatar.name)||"");setEditName(true);}} aria-label="なまえを変える" style={{...S.btn,background:"transparent",fontSize:11,color:"var(--text-muted)",padding:"0 6px"}}>✎</button>
+            </p>
+          )}
+          {latest?(
+            <React.Fragment>
+              <p style={{fontSize:16,fontWeight:700,margin:"0 0 4px",color:getScoreColor(latest.score),lineHeight:1.3}}>{row?row.title:""}</p>
+              <p style={{fontSize:11,color:"var(--text-sub)",margin:0,lineHeight:1.5}}>
+                {TIME_SLOT_CONFIG[latest.timeSlot].label}の記録: <b style={{color:getScoreColor(latest.score)}}>{latest.score>=0?"+":""}{latest.score}</b>
+                {todayAvg!==null&&<span style={{color:"var(--text-muted)"}}>（きょうの平均 {todayAvg>=0?"+":""}{todayAvg.toFixed(1)}・{todayEntries.length}/4回）</span>}
+              </p>
+            </React.Fragment>
+          ):(
+            <p style={{fontSize:15,fontWeight:600,margin:0,color:"var(--text-sub)"}}>きょうは、これから</p>
+          )}
+          {said&&<p className="fade-up" style={{fontSize:11.5,color:"var(--accent)",margin:"6px 0 0",fontWeight:600}}>「{said}」</p>}
+        </div>
+      </div>
+      {seen.length>0&&(
+        <div className="fade-up" style={{marginTop:14,paddingTop:12,borderTop:"1px dashed rgba(192,95,56,0.25)"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+            <p style={{fontSize:10,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:0}}>🐾 きょう来てる子</p>
+            <button onClick={()=>dispatch({type:"SET_TAB",tab:"zukan"})} style={{...S.btn,fontSize:10.5,color:"var(--text-muted)",background:"transparent",padding:"2px 4px"}}>ずかんへ ›</button>
+          </div>
+          <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
+            {seen.map(id=>{
+              const v=charById(id);if(!v)return null;
+              return(
+                <div key={id} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+                  <CharFace id={id} size={46}/>
+                  <span style={{fontSize:10,color:"var(--text-sub)",fontWeight:600}}>{v.name}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Home Tab
 function HomeTab(){
   const{state,dispatch}=useDiaryCtx();
@@ -1292,62 +1457,28 @@ function HomeTab(){
   const todayAvg=averageScore(todayEntries);
   const currentSlot=getCurrentTimeSlot();
   const lowStreak=useMemo(()=>isLowStreak(state.entries),[state.entries]);
+  // きょうの訪問者（重複なし）と、-4以下の記録の有無（相談導線を1タップ以内に置くため）
+  const todayVisitors=useMemo(()=>{const s=[];todayEntries.forEach(e=>(e.visitors||[]).forEach(id=>{if(!s.includes(id))s.push(id);}));return s;},[state.entries,todayStr]);
+  const todayLow=todayEntries.some(e=>e.score<=-4);
   return(
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      {/* Hero card */}
-      <div style={{...S.card,textAlign:"center",padding:28,background:"linear-gradient(135deg, #FDF3E3 0%, #FBE8D3 55%, #F7DFC5 100%)",border:"none"}}>
-        <p style={{fontSize:12,fontWeight:600,color:"var(--accent)",letterSpacing:"0.05em",marginBottom:8}}>今日のきもち</p>
-        {todayAvg!==null?(
-          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16}}>
-            <span style={{fontSize:44,fontWeight:800,color:getScoreColor(todayAvg),lineHeight:1}}>{todayAvg>=0?"+":""}{todayAvg.toFixed(1)}</span>
-            <FaceIcon score={Math.round(todayAvg)} size={52}/>
-          </div>
-        ):<p style={{fontSize:32,color:"var(--text-muted)",fontWeight:300}}>---</p>}
-        <div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:12,background:"rgba(192,95,56,0.1)",borderRadius:20,padding:"4px 14px"}}>
-          <div style={{width:6,height:6,borderRadius:3,background:"var(--accent)"}}/>
-          <span style={{fontSize:12,fontWeight:500,color:"var(--accent)"}}>今日は {todayEntries.length}/4 回 書いた</span>
-        </div>
-      </div>
+      {/* きょうのじぶん（分身＋きょう来てる子） */}
+      <AvatarHero/>
 
       {/* Time slots */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
         {TIME_SLOTS.map(slot=><TimeSlotCard key={slot} slot={slot} entry={todayEntries.find(e=>e.timeSlot===slot)} isCurrent={slot===currentSlot} onClick={()=>setEditSlot(slot)}/>)}
       </div>
 
-      {/* きょう来てる子（訪問者を選んだ日だけ、そっと出る） */}
-      {(()=>{
-        const seen=[];todayEntries.forEach(e=>(e.visitors||[]).forEach(id=>{if(!seen.includes(id))seen.push(id);}));
-        if(!seen.length)return null;
-        return(
-          <div className="fade-up" style={{...S.card,padding:"13px 16px"}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-              <p style={{fontSize:10,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:0}}>🐾 きょう来てる子</p>
-              <button onClick={()=>dispatch({type:"SET_TAB",tab:"zukan"})} style={{...S.btn,fontSize:10.5,color:"var(--text-muted)",background:"transparent",padding:"2px 4px"}}>ずかんへ ›</button>
-            </div>
-            <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-              {seen.map(id=>{
-                const v=charById(id);if(!v)return null;
-                return(
-                  <div key={id} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
-                    <CharFace id={id} size={46}/>
-                    <span style={{fontSize:10,color:"var(--text-sub)",fontWeight:600}}>{v.name}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })()}
+      {/* 低い日が続いたとき／きょう-4以下の記録があるときは、最優先で相談導線（1タップ以内・SV受け入れ条件） */}
+      {(lowStreak || (todayLow && !(todayAvg!==null && Math.round(todayAvg)<=-4))) && <CrisisStrip onOpen={()=>setShowCrisis(true)}/>}
 
-      {/* 低い日が続いたら、最優先で相談導線 */}
-      {lowStreak && <CrisisStrip onOpen={()=>setShowCrisis(true)}/>}
-
-      {/* 今日の状態カード（平均スコアから自動で表示）＋ 今日の手当て */}
+      {/* 今日の状態カード（平均スコアから自動で表示）＋ 今日の手当て（訪問者連動） */}
       {todayAvg!==null && (
         <div style={{marginTop:-4}}>
           <StateCard score={Math.round(todayAvg)}/>
           <div style={{...S.card,marginTop:12,padding:"8px 16px 14px"}}>
-            <CareSuggest score={Math.round(todayAvg)}/>
+            <CareSuggest score={Math.round(todayAvg)} visitors={todayVisitors}/>
           </div>
         </div>
       )}
@@ -1832,10 +1963,12 @@ function SettingsTab(){
 // ═══════════════════════════════════════
 function SituationNav(){
   const{state,dispatch}=useDiaryCtx();
-  const[selSit,setSelSit]=useState(null);
+  const[selSit,setSelSit]=useState(()=>state.pendingSit||null);
   const[sceneFilter,setSceneFilter]=useState("all");
   const[addText,setAddText]=useState("");
   const[addedMsg,setAddedMsg]=useState(null);
+  // ずかんの「この子が来たときの手当てをみる」から飛んできた場合、該当状況をひらく
+  useEffect(()=>{if(state.pendingSit){setSelSit(state.pendingSit);dispatch({type:"CLEAR_PENDING_SIT"});}},[state.pendingSit]);
 
   const sit = SITUATIONS.find(s=>s.id===selSit);
   const items = useMemo(()=>{
@@ -2165,6 +2298,7 @@ function SelfCareTab(){
 // ⭐で解放: あるある＋善意の深掘り（必ずセットで表示。あるある単独表示は禁止＝SV指摘）
 // ═══════════════════════════════════════
 function CharZukanCard({ch, unlocked, balance, onUnlock}){
+  const{dispatch}=useDiaryCtx();
   const[open,setOpen]=useState(false);
   const isInterpreter=!!ch.distortion;
   const canUnlock=balance>=UNLOCK_COST;
@@ -2185,6 +2319,13 @@ function CharZukanCard({ch, unlocked, balance, onUnlock}){
       {open&&(
         <div className="fade-up" style={{padding:"10px 14px 14px",borderTop:"1px dashed var(--border)"}}>
           <p style={{fontSize:12.5,color:"var(--text)",lineHeight:1.7,margin:"4px 0 10px"}}>{ch.description}</p>
+          {/* 訪問者→セルフケアの直リンク（感情⇔手当ての結節点） */}
+          {!isInterpreter&&ch.sit&&ch.sit.length>0&&(
+            <button onClick={()=>dispatch({type:"OPEN_SITUATION",sit:ch.sit[0]})}
+              style={{...S.btn,width:"100%",textAlign:"left",fontSize:11.5,fontWeight:600,color:"var(--accent)",background:"rgba(192,95,56,0.07)",border:"1px solid rgba(192,95,56,0.2)",borderRadius:10,padding:"8px 12px",marginBottom:10}}>
+              🩹 この子が来たときの手当てをみる ›
+            </button>
+          )}
           {isInterpreter&&(
             <div style={{background:"rgba(62,142,90,0.08)",border:"1px solid rgba(62,142,90,0.18)",borderRadius:10,padding:"9px 12px",marginBottom:8}}>
               <p style={{fontSize:10,fontWeight:700,color:"var(--positive)",margin:"0 0 3px",letterSpacing:"0.04em"}}>💬 落ちついて、確かめる質問</p>
@@ -2232,10 +2373,16 @@ function ZukanTab(){
       {/* 導入 */}
       <div style={{...S.card,padding:18,background:"linear-gradient(135deg, #FDF3E3 0%, #F9E6CE 100%)",border:"none"}}>
         <p style={{fontSize:11,fontWeight:700,color:"var(--accent)",letterSpacing:"0.05em",margin:0}}>こころのキャラずかん</p>
-        <h2 style={{fontSize:17,fontWeight:700,margin:"4px 0 6px"}}>きもちは訪問者、考えのクセは通訳者</h2>
+        <h2 style={{fontSize:17,fontWeight:700,margin:"4px 0 6px"}}>ここは、あなたの分身がすごす家</h2>
         <p style={{fontSize:12,color:"var(--text-sub)",lineHeight:1.7,margin:0}}>
-          どの子も敵じゃなくて、あなたを守ろうとして、ちょっとやりすぎてしまう子たち。
-          名前を知っていると「あ、いまベキベキが来てるな」と、少しはなれて眺められるよ。
+          きもちは、用事があって訪ねてくるお客さん（訪問者）。
+          考えのクセは、できごとをちょっと偏って翻訳しちゃう通訳者さん。
+          どの子も敵じゃなくて、あなたを守ろうとして、やりすぎてしまうことがあるだけ。
+          来ている子に気づけたら——それで、その日は満点だよ。
+        </p>
+        <p style={{fontSize:10.5,color:"var(--text-muted)",lineHeight:1.6,margin:"8px 0 0"}}>
+          ※ここに出てくるキャラは、みんな「考え方や気持ちのパターン」につけたニックネーム（たとえ）だよ。
+          どの子も、あなたのこころの中のうごきに名前をつけたものだよ。
         </p>
         <p style={{fontSize:11,color:"var(--text-muted)",lineHeight:1.6,margin:"8px 0 0"}}>
           よんでいて、むねがザワザワしたら、とじて休んでOK。スタッフに話すのもアリだよ。
@@ -2284,6 +2431,9 @@ function ZukanTab(){
         </div>
       </div>
 
+      {/* 合言葉（defusionの生活語・SV採用） */}
+      <p style={{textAlign:"center",fontSize:11.5,color:"var(--text-sub)",fontWeight:600,margin:"2px 0",letterSpacing:"0.03em"}}>わたしはわたし。来た子は、来た子。</p>
+
       {/* 相談先（安全装備・星とは無関係に常時） */}
       <CrisisStrip onOpen={()=>setShowCrisis(true)}/>
       {showCrisis&&<CrisisModal onClose={()=>setShowCrisis(false)}/>}
@@ -2307,6 +2457,11 @@ function Onboarding({onDone}){
       icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#3E8E5A" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#3E8E5A" fontFamily="sans-serif">✦</text></svg>,
       title:"セルフケアを見つけよう",
       body:"きもちを記録すると、その状態に合った「今日の手当て」が出てきます。\nやってみて「効いた？」を押すと、あなた専用の武器リストが育っていくよ。\nつらい時は「セルフケア」タブの『こんな時は？』から探せます。"
+    },
+    {
+      icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#E8B94F" opacity="0.2"/><text x="32" y="44" textAnchor="middle" fontSize="32" fontFamily="sans-serif">🐾</text></svg>,
+      title:"キャラの子たちについて",
+      body:"このアプリには、きもちや考え方のパターンにニックネームをつけたキャラが出てきます。\nみんな、あなたのこころの中のうごきに名前をつけた「たとえ」だよ。\nくわしくは「ずかん」タブでどうぞ。"
     },
     {
       icon: <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#C05F38" opacity="0.15"/><text x="32" y="44" textAnchor="middle" fontSize="32" fill="#C05F38" fontFamily="sans-serif">🔒</text></svg>,
