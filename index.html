@@ -895,7 +895,11 @@ function suggestCare(score, careLog, myCare, count=4, visitorIds=[]){
   // 上がりすぎ(+4以上)では活動を煽る項目を出さない（睡眠と鎮静を守る）
   if(score>=4) inRange = inRange.filter(it=>!it.hype);
   const my = (myCare||[]).map(m=>({...m, id:"my:"+m.id, states:[-5,5], my:true}));
-  const pool = [...inRange, ...my];
+  // きょう「やった」ものは並べ替えで消さず、必ず先頭に残す
+  // （順位が下がって行ごと消えると、取り消しも「効いた？」の選び直しもできなくなるため）
+  const doneIds = new Set((careLog||[]).filter(l=>l.date===today()).map(l=>l.itemId));
+  const done = [...CARE_ITEMS, ...my].filter(it=>doneIds.has(it.id));
+  const pool = [...inRange, ...my].filter(it=>!doneIds.has(it.id));
   // スコア帯ごとの優先: 低い時=体から / ふつう=気持ち・学習 / 良い時=キープと貯金
   const catPriority =
     score<=-4 ? {now:0,feel:1,base:2,fit:3,joy:4,think:9}
@@ -922,7 +926,7 @@ function suggestCare(score, careLog, myCare, count=4, visitorIds=[]){
     usedCat[c]=(usedCat[c]||0)+1;
     out.push(s.it);
   }
-  return out;
+  return [...done, ...out];
 }
 function isLowStreak(entries, days=2, threshold=-3){
   // 直近days日の平均がthreshold以下の日が続いているか
@@ -1099,12 +1103,12 @@ function CareItemRow({item, careLog, dispatch, score, compact=false}){
   const cat = CARE_CATEGORIES[item.cat] || {label:"じぶん", color:"var(--accent)", icon:"⭐"};
   const todayStr = today();
   const log = careLog.find(l=>l.date===todayStr && l.itemId===item.id);
-  const[justDone,setJustDone]=useState(false);
   const doIt=()=>{
     dispatch({type:"ADD_CARE_LOG",log:{id:crypto.randomUUID(),date:todayStr,itemId:item.id,text:item.text,effect:null,score:score??null,createdAt:new Date().toISOString()}});
-    setJustDone(true);
   };
-  const setEffect=(effect)=>{ if(log) dispatch({type:"SET_CARE_EFFECT",id:log.id,effect}); };
+  // 「やった」も「効いた？」も、いつでも取り消し・選び直しができる（押し間違いを責めない）
+  const undoIt=()=>{ if(log) dispatch({type:"DELETE_CARE_LOG",id:log.id}); };
+  const setEffect=(effect)=>{ if(log) dispatch({type:"SET_CARE_EFFECT",id:log.id,effect:log.effect===effect?null:effect}); };
   return(
     <div style={{padding:compact?"8px 0":"10px 0",borderBottom:"1px solid var(--border)"}}>
       <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
@@ -1117,20 +1121,30 @@ function CareItemRow({item, careLog, dispatch, score, compact=false}){
         {!log ? (
           <button onClick={doIt} style={{...S.btn,flexShrink:0,fontSize:12,fontWeight:700,padding:"7px 14px",borderRadius:16,background:"rgba(192,95,56,0.1)",color:"var(--accent)",border:"1px solid rgba(192,95,56,0.18)"}}>やった</button>
         ):(
-          <span className="pop-in" style={{flexShrink:0,fontSize:11,fontWeight:800,color:"var(--positive)",background:"rgba(62,142,90,0.12)",borderRadius:14,padding:"6px 11px"}}>✓ できた</span>
+          <div style={{display:"flex",gap:3,alignItems:"center",flexShrink:0}}>
+            <span className="pop-in" style={{fontSize:11,fontWeight:800,color:"var(--positive)",background:"rgba(62,142,90,0.12)",borderRadius:14,padding:"6px 11px"}}>✓ できた</span>
+            <button onClick={undoIt} aria-label="「やった」を取り消す" title="取り消す" style={{...S.btn,fontSize:11,color:"var(--text-muted)",background:"transparent",padding:"6px 5px",lineHeight:1}}>↩</button>
+          </div>
         )}
       </div>
-      {log && !log.effect && (
-        <div className="fade-up" style={{display:"flex",gap:6,alignItems:"center",marginTop:8,marginLeft:21}}>
+      {log && (
+        <div className="fade-up" style={{display:"flex",gap:6,alignItems:"center",marginTop:8,marginLeft:21,flexWrap:"wrap"}}>
           <span style={{fontSize:10.5,color:"var(--text-sub)"}}>効いた？</span>
-          {[["good","○ 効いた","var(--positive)"],["soso","△ まあまあ","#B07A2E"],["bad","× 合わない","var(--text-muted)"]].map(([k,l,c])=>(
-            <button key={k} onClick={()=>setEffect(k)} style={{...S.btn,fontSize:10.5,fontWeight:600,padding:"4px 9px",borderRadius:12,background:"var(--card)",border:"1px solid var(--border)",color:c}}>{l}</button>
-          ))}
+          {[["good","○ 効いた","var(--positive)"],["soso","△ まあまあ","#B07A2E"],["bad","× 合わない","var(--text-muted)"]].map(([k,l,c])=>{
+            const on=log.effect===k;
+            return(
+              <button key={k} onClick={()=>setEffect(k)} aria-pressed={on}
+                style={{...S.btn,fontSize:10.5,fontWeight:on?800:600,padding:"4px 9px",borderRadius:12,
+                  background:on?"rgba(62,142,90,0.10)":"var(--card)",
+                  border:on?"1.5px solid "+c:"1px solid var(--border)",color:c}}>{l}</button>
+            );
+          })}
         </div>
       )}
       {log && log.effect && (
         <p style={{fontSize:10.5,color:"var(--text-muted)",margin:"6px 0 0 21px"}}>
           {log.effect==="good"?"○ 効いた — じぶんの武器が1つ増えたね":log.effect==="soso"?"△ まあまあ — それでも試せたのがえらい":"× 合わなかった — あなたのせいじゃないよ。別のを試そう"}
+          <span style={{color:"var(--text-muted)",opacity:0.75}}>（もう一度おすと、えらび直せるよ）</span>
         </p>
       )}
     </div>
